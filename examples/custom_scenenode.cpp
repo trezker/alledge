@@ -81,6 +81,9 @@ bool Init()
 	root.Attach_node(camera);
 
 	light = new Lightnode;
+	light->Set_ambient(3, 3, 3, 1);
+	light->Set_diffuse(1, 1, 1, 1);
+	light->Set_specular(1, 1, 1, 1);
 	camera->Attach_node(light);
 	
 	transform = new Transformnode;

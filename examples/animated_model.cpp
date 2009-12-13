@@ -59,14 +59,19 @@ bool Init()
 	}
 	
 	camera = new Cameranode();
-	camera->Set_position(Vector3(0, 0, 10));
+	camera->Set_position(Vector3(0, 10, 50));
 	camera->Set_rotation(Vector3(0, 0, 0));
 	root.Attach_node(camera);
+
 
 /*	transform_light = new Transformnode;
 	transform_light->Set_position(Vector3(0, 5, -5));
 	camera->Attach_node(transform_light);
 */	light = new Lightnode;
+	light->Set_ambient(3, 3, 3, 1);
+	light->Set_diffuse(1, 1, 1, 1);
+	light->Set_specular(1, 1, 1, 1);
+//	light->Set_position(Vector3(0, 0, -1), true);
 	camera->Attach_node(light);
 	
 	transform = new Transformnode;
@@ -81,10 +86,13 @@ bool Init()
 	transform->Attach_node(model);
 */
 	model = new Animated_model;
-	model->Load_model("../darw.md5mesh");
-	model->Load_animation("../darw_walk.md5anim", "walk");
+//	model->Load_model("../darw.md5mesh");
+//	model->Load_animation("../darw_walk.md5anim", "walk");
+	model->Load_model("../Male.md5mesh");
+	model->Load_animation("../Male_walk.md5anim", "walk");
+	model->Load_animation("../Male_run.md5anim", "run");
 	skirt_model = new Animated_model;
-	skirt_model->Load_model("../darw_skirt.md5mesh");
+	skirt_model->Load_model("../Male.md5mesh");
 
 	model_instance = new Animated_model_instance;
 	model_instance->Set_model(model);
@@ -95,10 +103,10 @@ bool Init()
 
 	model_instance2 = new Animated_model_instance;
 	model_instance2->Set_model(model);
-	model_instance2->Play_animation("walk", true);
+	model_instance2->Play_animation("run", true);
 	transform2->Attach_node(model_instance2);
-	transform2->Set_position(Vector3(-1, 0, 0));
-	model_instance->Attach_to_bone("Left_foot", transform2);
+	transform2->Set_position(Vector3(-10, 0, 0));
+	model_instance->Attach_to_bone("Hand.L", transform2);
 	return true;
 }
 
@@ -110,7 +118,7 @@ void Update(float dt)
 	transform2->Set_rotation(rot);
 //	model->Update(dt);
 	model_instance->Update(dt);
-	model_instance2->Update(dt/2);
+	model_instance2->Update(dt);
 }
 
 void Render()
