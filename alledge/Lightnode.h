@@ -14,6 +14,12 @@ public:
 	void Set_ambient(float r, float g, float b, float a);
 	void Set_diffuse(float r, float g, float b, float a);
 	void Set_specular(float r, float g, float b, float a);
+	void Set_ambient(float *v);
+	void Set_diffuse(float *v);
+	void Set_specular(float *v);
+	void Get_ambient(float *v);
+	void Get_diffuse(float *v);
+	void Get_specular(float *v);
 private:
 	Vector3 position;
 	bool directional;	

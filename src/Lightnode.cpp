@@ -43,6 +43,54 @@ void Lightnode::Set_specular(float r, float g, float b, float a)
 	specular[3] = a;
 }
 
+void Lightnode::Set_ambient(float *v)
+{
+	for(int i=0; i<4; ++i)
+	{
+		ambient[i] = v[i];
+	}
+}
+
+void Lightnode::Set_diffuse(float *v)
+{
+	for(int i=0; i<4; ++i)
+	{
+		diffuse[i] = v[i];
+	}
+}
+
+void Lightnode::Set_specular(float *v)
+{
+	for(int i=0; i<4; ++i)
+	{
+		specular[i] = v[i];
+	}
+}
+
+void Lightnode::Get_ambient(float *v)
+{
+	for(int i=0; i<4; ++i)
+	{
+		v[i] = ambient[i];
+	}
+}
+
+void Lightnode::Get_diffuse(float *v)
+{
+	for(int i=0; i<4; ++i)
+	{
+		v[i] = diffuse[i];
+	}
+}
+
+void Lightnode::Get_specular(float *v)
+{
+	for(int i=0; i<4; ++i)
+	{
+		v[i] = specular[i];
+	}
+}
+
 void Lightnode::Prerender()
 {
 	GLfloat LightAmbient[]= { 0.5f, 0.5f, 0.5f, 1.0f };
