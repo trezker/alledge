@@ -104,15 +104,16 @@ void Lightnode::Prerender()
 		std::cout<<"Lights used are more than GL_MAX_LIGHTS by "<<max_used_lights - GL_MAX_LIGHTS<<std::endl;
 		return;
 	}
-	GLfloat LightAmbient[]= { 0.5f, 0.5f, 0.5f, 1.0f };
+	int light = GL_LIGHT0+lights_in_use;
+/*	GLfloat LightAmbient[]= { 0.5f, 0.5f, 0.5f, 1.0f };
 	GLfloat LightDiffuse[]= { 1.0f, 1.0f, 1.0f, 1.0f };
 	GLfloat LightSpecular[]= { 1.0f, 1.0f, 1.0f, 1.0f };
-	GLfloat LightPosition[]= { position.x, position.y, position.z, directional?0.0f:1.0f };
-	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
-	glLightfv(GL_LIGHT0, GL_POSITION, LightPosition);
-	glEnable(GL_LIGHT0+lights_in_use);
+*/	GLfloat LightPosition[]= { position.x, position.y, position.z, directional?0.0f:1.0f };
+	glLightfv(light, GL_AMBIENT, ambient);
+	glLightfv(light, GL_DIFFUSE, diffuse);
+	glLightfv(light, GL_SPECULAR, specular);
+	glLightfv(light, GL_POSITION, LightPosition);
+	glEnable(light);
 	++lights_in_use;
 }
 
@@ -124,7 +125,8 @@ void Lightnode::Postrender()
 		return;
 	}
 	--lights_in_use;
-	glDisable(GL_LIGHT0+lights_in_use);
+	int light = GL_LIGHT0+lights_in_use;
+	glDisable(light);
 }
 
 void Lightnode::Set_position(Vector3 pos, bool d)

@@ -72,12 +72,17 @@ void Animated_model::Render()
 		glBindTexture(GL_TEXTURE_2D, al_get_opengl_texture(texture));
 		glEnable(GL_TEXTURE_2D);
 		glShadeModel(GL_SMOOTH);
-
 		glAlphaFunc(GL_GREATER,0.1f);
 		glEnable(GL_ALPHA_TEST);
 	}
 	glPushMatrix();
 	glRotatef (-90.f, 1.0f, .0f, .0f);
+
+	GLfloat ambient[]= { 0.2f, 0.2f, 0.2f, 1.0f };
+	GLfloat diffuse[]= { 0.8f, 0.8f, 0.8f, 1.0f };
+	glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
+	glColor3f (1.0f, 1.0f, 1.0f);
 
 	Draw_model(md5file, skeleton);
 

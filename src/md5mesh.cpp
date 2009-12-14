@@ -350,11 +350,18 @@ PrepareMesh (const struct md5_mesh_t *mesh, const struct md5_joint_t *skeleton)
 		vertexArray[i][2] = finalVertex[2];
 	}
 
-	/* Setup normals */
-	for (k = 0, i = 0; i < mesh->num_tris; ++i)
+	//Zero the normals
+	for (i = 0; i < mesh->num_verts; ++i)
 	{
-		vec3_t *v[3];
-		for (j = 0; j < 3; ++j, ++k)
+		normals[i][0] = 0;
+		normals[i][1] = 0;
+		normals[i][2] = 0;
+	}
+	/* Setup normals */
+	for (i = 0; i < mesh->num_tris; ++i)
+	{
+		vec3_t *v[3], norm;
+		for (j = 0; j < 3; ++j)
 		{
 			v[j] = &vertexArray[ mesh->triangles[i].index[j] ];
 		}
@@ -366,26 +373,43 @@ PrepareMesh (const struct md5_mesh_t *mesh, const struct md5_joint_t *skeleton)
 		in2[0] = (*v[2])[0] - (*v[0])[0];
 		in2[1] = (*v[2])[1] - (*v[0])[1];
 		in2[2] = (*v[2])[2] - (*v[0])[2];
-		vec3_CrossProduct(in2, in1, &normals[i*3]);
-		float x = normals[i*3][0];
-		float y = normals[i*3][1];
-		float z = normals[i*3][2];
+		vec3_CrossProduct(in2, in1, &norm);
+		float x = norm[0];
+		float y = norm[1];
+		float z = norm[2];
 		float len = sqrt( x * x + y * y + z * z );
 		len = (len != 0.0f ? len : 1.0f);
 		float lengthMul = 1.0f / len;
 		x *= lengthMul;
 		y *= lengthMul;
 		z *= lengthMul;
-		normals[i*3][0] = x;
-		normals[i*3][1] = y;
-		normals[i*3][2] = z;
+		norm[0] = x;
+		norm[1] = y;
+		norm[2] = z;
 
-		normals[i*3+1][0] = normals[i*3][0];
-		normals[i*3+1][1] = normals[i*3][1];
-		normals[i*3+1][2] = normals[i*3][2];
-		normals[i*3+2][0] = normals[i*3][0];
-		normals[i*3+2][1] = normals[i*3][1];
-		normals[i*3+2][2] = normals[i*3][2];
+		for (j = 0; j < 3; ++j)
+		{
+			int ind = mesh->triangles[i].index[j];
+			normals[ind][0] += norm[0];
+			normals[ind][1] += norm[1];
+			normals[ind][2] += norm[2];
+		}
+	}
+	//Normalize the normals
+	for (i = 0; i < mesh->num_verts; ++i)
+	{
+		float x = normals[i][0];
+		float y = normals[i][1];
+		float z = normals[i][2];
+		float len = sqrt( x * x + y * y + z * z );
+		len = (len != 0.0f ? len : 1.0f);
+		float lengthMul = 1.0f / len;
+		x *= lengthMul;
+		y *= lengthMul;
+		z *= lengthMul;
+		normals[i][0] = x;
+		normals[i][1] = y;
+		normals[i][2] = z;
 	}
 }
 
@@ -396,7 +420,7 @@ AllocVertexArrays ()
 	vertexArray = (vec3_t *)malloc (sizeof (vec3_t) * max_verts);
 	vertexIndices = (GLuint *)malloc (sizeof (GLuint) * max_tris * 3);
 	texCoords = (float *)malloc (sizeof (float) * max_verts * 2);
-	normals = (vec3_t *)malloc (sizeof (vec3_t) * max_tris * 3);
+	normals = (vec3_t *)malloc (sizeof (vec3_t) * max_verts);
 }
 
 void
@@ -459,14 +483,11 @@ DrawSkeleton (const struct md5_joint_t *skeleton, int num_joints)
 void Draw_model(struct md5_model_t md5file, struct md5_joint_t *skeleton)
 {
 	int i = 0;
-	glColor3f (1.0f, 1.0f, 1.0f);
 
 	glEnableClientState (GL_VERTEX_ARRAY);
 	glEnableClientState (GL_NORMAL_ARRAY);
 	glEnableClientState (GL_TEXTURE_COORD_ARRAY);
 	
-//	glRotatef (-90.f, 1.0f, .0f, .0f);
-
 	for (i = 0; i < md5file.num_meshes; ++i)
 	{
 		PrepareMesh (&md5file.meshes[i], skeleton);
@@ -478,15 +499,18 @@ void Draw_model(struct md5_model_t md5file, struct md5_joint_t *skeleton)
 		glDrawElements (GL_TRIANGLES, md5file.meshes[i].num_tris * 3,
 						GL_UNSIGNED_INT, vertexIndices);
 
-/*		glBegin(GL_LINES);
-		for(int j = 0; j < md5file.meshes[i].num_tris*3; ++j)
+/*		glDisable(GL_LIGHTING);
+		glShadeModel(GL_SMOOTH);
+		glBegin(GL_LINES);
+		for(int j = 0; j < md5file.meshes[i].num_verts; ++j)
 		{
-			vec3_t *v = &vertexArray[vertexIndices[j]];
-			vec3_t *n = &normals[vertexIndices[j]];
-			glTexCoord1f(0); glVertex3f((*v)[0], (*v)[1], (*v)[2]);
-			glTexCoord1f(1); glVertex3f((*v)[0]+(*n)[0], (*v)[1]+(*n)[1], (*v)[2]+(*n)[2]);
+			vec3_t *v = &vertexArray[j];
+			vec3_t *n = &normals[j];
+			glColor3f(1, 0, 0);glVertex3f((*v)[0], (*v)[1], (*v)[2]);
+			glColor3f(0, 1, 0);glVertex3f((*v)[0]+(*n)[0], (*v)[1]+(*n)[1], (*v)[2]+(*n)[2]);
 		}
 		glEnd();
+		glEnable(GL_LIGHTING);
 */	}
 
 	glDisableClientState (GL_TEXTURE_COORD_ARRAY);
