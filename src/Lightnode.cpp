@@ -1,6 +1,10 @@
 #include "../alledge/Lightnode.h"
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_opengl.h>
+#include <iostream>
+
+int Lightnode::lights_in_use = 0;
+int max_used_lights = 0;
 
 //Initialized to opengl default values.
 Lightnode::Lightnode()
@@ -93,20 +97,34 @@ void Lightnode::Get_specular(float *v)
 
 void Lightnode::Prerender()
 {
+	if(lights_in_use >= GL_MAX_LIGHTS)
+	{
+		++lights_in_use;
+		max_used_lights = lights_in_use;
+		std::cout<<"Lights used are more than GL_MAX_LIGHTS by "<<max_used_lights - GL_MAX_LIGHTS<<std::endl;
+		return;
+	}
 	GLfloat LightAmbient[]= { 0.5f, 0.5f, 0.5f, 1.0f };
 	GLfloat LightDiffuse[]= { 1.0f, 1.0f, 1.0f, 1.0f };
 	GLfloat LightSpecular[]= { 1.0f, 1.0f, 1.0f, 1.0f };
 	GLfloat LightPosition[]= { position.x, position.y, position.z, directional?0.0f:1.0f };
-	glLightfv(GL_LIGHT1, GL_AMBIENT, ambient);
-	glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuse);
-	glLightfv(GL_LIGHT1, GL_SPECULAR, specular);
-	glLightfv(GL_LIGHT1, GL_POSITION, LightPosition);
-	glEnable(GL_LIGHT1);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+	glLightfv(GL_LIGHT0, GL_POSITION, LightPosition);
+	glEnable(GL_LIGHT0+lights_in_use);
+	++lights_in_use;
 }
 
 void Lightnode::Postrender()
 {
-	glDisable(GL_LIGHT1);
+	if(lights_in_use > GL_MAX_LIGHTS)
+	{
+		--lights_in_use;
+		return;
+	}
+	--lights_in_use;
+	glDisable(GL_LIGHT0+lights_in_use);
 }
 
 void Lightnode::Set_position(Vector3 pos, bool d)

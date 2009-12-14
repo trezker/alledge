@@ -42,7 +42,6 @@ Scenenode root;
 Cameranode* camera;
 Lightnode* light;
 Transformnode* transform;
-ALLEGRO_BITMAP* texture;
 Text text;
 
 void Prerender_perspective_view(float fov, float aspect, float near, float far)
@@ -66,15 +65,6 @@ void Postrender_perspective_view()
 
 bool Init()
 {
-	texture = al_load_bitmap("darwinian.png");
-	if(!texture)
-		texture = al_load_bitmap("../darwinian.png");
-	if(!texture)
-	{
-		std::cout<<"ERROR: Could not load darwinian.png"<<std::endl;
-		return false;
-	}
-	
 	camera = new Cameranode();
 	camera->Set_position(Vector3(0, 0, 10));
 	camera->Set_rotation(Vector3(0, 0, 0));
@@ -89,7 +79,7 @@ bool Init()
 	transform = new Transformnode;
 	light->Attach_node(transform);
 
-	ALLEGRO_FONT *font = al_load_ttf_font("../DejaVuSans.ttf", 42, 0);
+	ALLEGRO_FONT *font = al_load_ttf_font("data/DejaVuSans.ttf", 42, 0);
 	text.Set_font(font);
 	text.Set_text("Hello world!");
 

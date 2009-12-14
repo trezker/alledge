@@ -40,9 +40,7 @@ void Postrender_perspective_view()
 
 bool Init()
 {
-	texture = al_load_bitmap("darwinian.png");
-	if(!texture)
-		texture = al_load_bitmap("../darwinian.png");
+	texture = al_load_bitmap("data/darwinian.png");
 	if(!texture)
 	{
 		std::cout<<"ERROR: Could not load darwinian.png"<<std::endl;

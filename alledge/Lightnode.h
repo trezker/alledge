@@ -21,6 +21,7 @@ public:
 	void Get_diffuse(float *v);
 	void Get_specular(float *v);
 private:
+	static int lights_in_use;
 	Vector3 position;
 	bool directional;	
 

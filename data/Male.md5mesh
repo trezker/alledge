@@ -58,7 +58,7 @@ joints {
 }
 
 mesh {
-	shader "/home/anders/blender/male/Colormap.png"
+	shader "data/Colormap.png"
 
 	numverts 851
 	vert 0 ( 0.784363 0.516772 ) 0 2

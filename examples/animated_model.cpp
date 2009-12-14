@@ -21,7 +21,6 @@ Lightnode* light;
 Transformnode* transform;
 Transformnode* transform2;
 Quadnode quads[6];
-ALLEGRO_BITMAP* texture;
 //Animated_modelnode* model;
 Animated_model* model;
 Animated_model* skirt_model;
@@ -49,15 +48,6 @@ void Postrender_perspective_view()
 
 bool Init()
 {
-	texture = al_load_bitmap("darwinian.png");
-	if(!texture)
-		texture = al_load_bitmap("../darwinian.png");
-	if(!texture)
-	{
-		std::cout<<"ERROR: Could not load darwinian.png"<<std::endl;
-		return false;
-	}
-	
 	camera = new Cameranode();
 	camera->Set_position(Vector3(0, 10, 50));
 	camera->Set_rotation(Vector3(0, 0, 0));
@@ -88,11 +78,11 @@ bool Init()
 	model = new Animated_model;
 //	model->Load_model("../darw.md5mesh");
 //	model->Load_animation("../darw_walk.md5anim", "walk");
-	model->Load_model("../Male.md5mesh");
-	model->Load_animation("../Male_walk.md5anim", "walk");
-	model->Load_animation("../Male_run.md5anim", "run");
+	model->Load_model("data/Male.md5mesh");
+	model->Load_animation("data/Male_walk.md5anim", "walk");
+	model->Load_animation("data/Male_run.md5anim", "run");
 	skirt_model = new Animated_model;
-	skirt_model->Load_model("../Male.md5mesh");
+	skirt_model->Load_model("data/Male.md5mesh");
 
 	model_instance = new Animated_model_instance;
 	model_instance->Set_model(model);
