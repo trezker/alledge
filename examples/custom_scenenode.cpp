@@ -3,9 +3,9 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_opengl.h>
-#include <GL/glu.h>
 #include <iostream>
 
+#include "../alledge/View.h"
 #include "../alledge/Scenenode.h"
 #include "../alledge/Cameranode.h"
 #include "../alledge/Lightnode.h"
@@ -44,24 +44,6 @@ Lightnode* light;
 Transformnode* transform;
 Text text;
 
-void Prerender_perspective_view(float fov, float aspect, float near, float far)
-{
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	gluPerspective(fov, aspect, near, far);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-}
-
-void Postrender_perspective_view()
-{
-	//Return to Allegros 2D world
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-}
 
 bool Init()
 {
@@ -101,7 +83,7 @@ void Render()
 	float far = 1000.f;
 	float width = 640;
 	float height = 480;
-	Prerender_perspective_view(fov, width/height, near, far);
+	Init_perspective_view(fov, width/height, near, far);
 
 	glEnable(GL_DEPTH_TEST);
  	glClear(GL_DEPTH_BUFFER_BIT);
@@ -112,7 +94,7 @@ void Render()
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);
 
-	Postrender_perspective_view();
+	Pop_view();
 }
 
 void Event(ALLEGRO_EVENT event)
