@@ -39,10 +39,10 @@ private:
 };
 
 Scenenode root;
-Cameranode* camera;
-Lightnode* light;
-Transformnode* transform;
-Text text;
+shared_ptr<Cameranode> camera;
+shared_ptr<Lightnode> light;
+shared_ptr<Transformnode> transform;
+shared_ptr<Text> text;
 
 
 bool Init()
@@ -62,10 +62,10 @@ bool Init()
 	light->Attach_node(transform);
 
 	ALLEGRO_FONT *font = al_load_ttf_font("data/DejaVuSans.ttf", 42, 0);
-	text.Set_font(font);
-	text.Set_text("Hello world!");
-
-	transform->Attach_node(&text);
+	text = new Text;
+	text->Set_font(font);
+	text->Set_text("Hello world!");
+	transform->Attach_node(text);
 	return true;
 }
 

@@ -14,17 +14,14 @@
 #include "../alledge/Animated_model_instance.h"
 
 Scenenode root;
-Cameranode* camera;
-Transformnode* transform_light;
-Lightnode* light;
-Transformnode* transform;
-Transformnode* transform2;
-Quadnode quads[6];
-//Animated_modelnode* model;
+shared_ptr<Cameranode> camera;
+shared_ptr<Lightnode> light;
+shared_ptr<Transformnode> transform;
+shared_ptr<Transformnode> transform2;
 Animated_model* model;
 Animated_model* skirt_model;
-Animated_model_instance* model_instance;
-Animated_model_instance* model_instance2;
+shared_ptr<Animated_model_instance> model_instance;
+shared_ptr<Animated_model_instance> model_instance2;
 
 bool Init()
 {
@@ -34,10 +31,7 @@ bool Init()
 	root.Attach_node(camera);
 
 
-/*	transform_light = new Transformnode;
-	transform_light->Set_position(Vector3(0, 5, -5));
-	camera->Attach_node(transform_light);
-*/	light = new Lightnode;
+	light = new Lightnode;
 	light->Set_ambient(1, 1, 1, 1);
 	light->Set_diffuse(1, 1, 1, 1);
 	light->Set_specular(1, 1, 1, 1);

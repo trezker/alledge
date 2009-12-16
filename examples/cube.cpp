@@ -13,10 +13,10 @@
 #include "../alledge/Transformnode.h"
 
 Scenenode root;
-Cameranode* camera;
-Lightnode* light;
-Transformnode* transform;
-Quadnode quads[6];
+shared_ptr<Cameranode> camera;
+shared_ptr<Lightnode> light;
+shared_ptr<Transformnode> transform;
+shared_ptr<Quadnode> quads[6];
 ALLEGRO_BITMAP* texture;
 
 bool Init()
@@ -72,9 +72,10 @@ bool Init()
 
 	for(int i = 0; i<6; ++i)
 	{
-		quads[i].Set_corners(corners[i]);
-		quads[i].Set_texture(texture);
-		transform->Attach_node(&quads[i]);
+		quads[i] = new Quadnode;
+		quads[i]->Set_corners(corners[i]);
+		quads[i]->Set_texture(texture);
+		transform->Attach_node(quads[i]);
 	}
 	return true;
 }

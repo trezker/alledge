@@ -3,12 +3,12 @@
 #include <allegro5/allegro_opengl.h>
 #include <algorithm>
 
-void Scenenode::Attach_node(Scenenode* node)
+void Scenenode::Attach_node(shared_ptr<Scenenode> node)
 {
 	children.push_back(node);
 }
 
-void Scenenode::Detach_node(Scenenode* node)
+void Scenenode::Detach_node(shared_ptr<Scenenode> node)
 {
 	children.erase(std::find(children.begin(), children.end(), node));
 }

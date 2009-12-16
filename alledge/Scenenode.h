@@ -2,19 +2,20 @@
 #define Scenenode_h
 
 #include <vector>
+#include "shared_ptr.h"
 
 class Scenenode
 {
 public:
-	void Attach_node(Scenenode* node);
-	void Detach_node(Scenenode* node);
+	void Attach_node(shared_ptr<Scenenode> node);
+	void Detach_node(shared_ptr<Scenenode> node);
 	void Apply();
 	
 	virtual void Prerender(){}
 	virtual void Render(){}
 	virtual void Postrender(){}
 private:
-	typedef std::vector<Scenenode*> Children;
+	typedef std::vector< shared_ptr<Scenenode> > Children;
 	Children children;
 };
 
