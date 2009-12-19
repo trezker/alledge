@@ -26,7 +26,7 @@ shared_ptr<Animated_model_instance> model_instance2;
 bool Init()
 {
 	camera = new Cameranode();
-	camera->Set_position(Vector3(0, 8, 20));
+	camera->Set_position(Vector3(0, 8, 50));
 	camera->Set_rotation(Vector3(0, 0, 0));
 	root.Attach_node(camera);
 
@@ -43,12 +43,6 @@ bool Init()
 	transform2 = new Transformnode;
 	light->Attach_node(transform2);
 
-/*	model = new Animated_modelnode;
-	model->Load_model("../darw.md5mesh");
-	model->Load_animation("../darw_walk.md5anim", "walk");
-	model->Play_animation("walk", true);
-	transform->Attach_node(model);
-*/
 	model = new Animated_model;
 //	model->Load_model("../darw.md5mesh");
 //	model->Load_animation("../darw_walk.md5anim", "walk");
@@ -64,14 +58,14 @@ bool Init()
 	model_instance->Play_animation("walk", true);
 	transform->Attach_node(model_instance);
 	transform->Set_position(Vector3(0, 0, 0));
-/*
+
 	model_instance2 = new Animated_model_instance;
 	model_instance2->Set_model(model);
 	model_instance2->Play_animation("run", true);
 	transform2->Attach_node(model_instance2);
 	transform2->Set_position(Vector3(-10, 0, 0));
 	model_instance->Attach_to_bone("Hand.L", transform2);
-*/	return true;
+	return true;
 }
 
 void Update(float dt)
@@ -80,9 +74,8 @@ void Update(float dt)
 	rot.y += 30*dt;
 	transform->Set_rotation(rot);
 	transform2->Set_rotation(rot);
-//	model->Update(dt);
 	model_instance->Update(dt);
-//	model_instance2->Update(dt);
+	model_instance2->Update(dt);
 }
 
 void Render()

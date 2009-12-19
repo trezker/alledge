@@ -42,7 +42,7 @@ void Animated_model_instance::Remove_model(shared_ptr<Animated_model> m)
 	models.erase(i);
 }
 
-void Animated_model_instance::Attach_to_bone(const std::string& bone, Scenenode* node)
+void Animated_model_instance::Attach_to_bone(const std::string& bone, shared_ptr<Scenenode> node)
 {
 	if(model->Has_bone(bone))
 	{
@@ -50,7 +50,7 @@ void Animated_model_instance::Attach_to_bone(const std::string& bone, Scenenode*
 	}
 }
 
-void Animated_model_instance::Detach_from_bone(const std::string& bone, Scenenode* node)
+void Animated_model_instance::Detach_from_bone(const std::string& bone, shared_ptr<Scenenode> node)
 {
 	Attachments::iterator i = std::find(bone_attachments[bone].begin(), bone_attachments[bone].end(), node);
 	bone_attachments[bone].erase(i);

@@ -25,8 +25,8 @@ public:
 	void Set_model(shared_ptr<Animated_model> m);
 	void Add_model(shared_ptr<Animated_model> m);
 	void Remove_model(shared_ptr<Animated_model> m);
-	void Attach_to_bone(const std::string& bone, Scenenode* node);
-	void Detach_from_bone(const std::string& bone, Scenenode* node);
+	void Attach_to_bone(const std::string& bone, shared_ptr<Scenenode> node);
+	void Detach_from_bone(const std::string& bone, shared_ptr<Scenenode> node);
 
 	void Render();
 	
@@ -40,7 +40,7 @@ private:
 	typedef std::vector< shared_ptr<Animated_model> > Models;
 	Models models;
 
-	typedef std::vector<Scenenode*> Attachments;
+	typedef std::vector< shared_ptr<Scenenode> > Attachments;
 	typedef std::map<std::string, Attachments> Bone_attachments;
 	Bone_attachments bone_attachments;
 };
