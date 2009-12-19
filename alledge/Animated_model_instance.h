@@ -11,6 +11,9 @@
 #include "md5model.h"
 #include "../alledge/Animated_model.h"
 
+//Todo: Add texture here that can override the models default texture.
+//Todo: All shared pointers plz
+
 class Animated_model_instance: public Scenenode
 {
 public:

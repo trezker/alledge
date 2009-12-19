@@ -1,12 +1,12 @@
-#include "../alledge/Animated_model.h"
 #include <fstream>
-#include "math/Vector3.h"
-#include "../alledge/Quadnode.h"
 #include <iostream>
 #include <cmath>
 #include <algorithm>
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_image.h>
+
+#include "../alledge/Animated_model.h"
+#include "../alledge/Bitmap.h"
 
 Animated_model::Animated_model()
 {
@@ -20,7 +20,7 @@ Animated_model::~Animated_model()
 
 }
 
-void Animated_model::Set_texture(ALLEGRO_BITMAP* t)
+void Animated_model::Set_texture(shared_ptr<Bitmap> t)
 {
 	texture = t;
 }
@@ -47,7 +47,8 @@ void Animated_model::Load_model(const std::string& filename)
 
 	for(int i = 0; i<md5file.num_meshes; ++i)
 	{
-		texture = al_load_bitmap(md5file.meshes[i].shader);
+		texture = new Bitmap;
+		texture->Load(md5file.meshes[i].shader);
 	}
 }
 
@@ -67,9 +68,9 @@ void Animated_model::Load_animation(const std::string& filename, const std::stri
 
 void Animated_model::Render()
 {
-	if(texture)
+	if(texture.get())
 	{
-		glBindTexture(GL_TEXTURE_2D, al_get_opengl_texture(texture));
+		glBindTexture(GL_TEXTURE_2D, texture->get_opengl_texture());
 		glEnable(GL_TEXTURE_2D);
 		glShadeModel(GL_SMOOTH);
 		glAlphaFunc(GL_GREATER,0.1f);
@@ -93,7 +94,7 @@ void Animated_model::Render()
 */
 	glPopMatrix();
 
-	if(texture)
+	if(texture.get())
 	{
 		glDisable(GL_ALPHA_TEST);
 		glDisable(GL_TEXTURE_2D);

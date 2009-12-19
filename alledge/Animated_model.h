@@ -9,14 +9,14 @@
 #include <map>
 #include "math/Vector3.h"
 #include "md5model.h"
-
+class Bitmap;
 
 class Animated_model
 {
 public:
 	Animated_model();
 	~Animated_model();
-	void Set_texture(ALLEGRO_BITMAP* t);
+	void Set_texture(shared_ptr<Bitmap> t);
 	void Load_model(const std::string& filename);
 	void Load_animation(const std::string& filename, const std::string& name);
 
@@ -35,7 +35,7 @@ private:
 	typedef std::map<std::string, md5_anim_t> Animations;
 	Animations animations;
 
-	ALLEGRO_BITMAP* texture;
+	shared_ptr<Bitmap> texture;
 
 	md5_model_t md5file;
 
