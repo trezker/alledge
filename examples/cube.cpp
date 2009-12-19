@@ -11,17 +11,19 @@
 #include "../alledge/Lightnode.h"
 #include "../alledge/Quadnode.h"
 #include "../alledge/Transformnode.h"
+#include "../alledge/Bitmap.h"
 
 Scenenode root;
 shared_ptr<Cameranode> camera;
 shared_ptr<Lightnode> light;
 shared_ptr<Transformnode> transform;
 shared_ptr<Quadnode> quads[6];
-ALLEGRO_BITMAP* texture;
+shared_ptr<Bitmap> texture;
 
 bool Init()
 {
-	texture = al_load_bitmap("data/darwinian.png");
+	texture = new Bitmap;
+	texture->Load("data/darwinian.png");
 	if(!texture)
 	{
 		std::cout<<"ERROR: Could not load darwinian.png"<<std::endl;

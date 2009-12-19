@@ -1,4 +1,5 @@
 #include "../alledge/Quadnode.h"
+#include "../alledge/Bitmap.h"
 
 Quadnode::Quadnode()
 :texture(NULL)
@@ -14,16 +15,16 @@ void Quadnode::Set_corners(Vector3 p[4])
 	normal = v2.CrossProduct( v1 ).GetNormalized();
 }
 
-void Quadnode::Set_texture(ALLEGRO_BITMAP* t)
+void Quadnode::Set_texture(shared_ptr<Bitmap> t)
 {
 	texture = t;
 }
 
 void Quadnode::Render()
 {
-	if(texture)
+	if(texture.get())
 	{
-		glBindTexture(GL_TEXTURE_2D, al_get_opengl_texture(texture));
+		glBindTexture(GL_TEXTURE_2D, texture->get_opengl_texture());
 		glEnable(GL_TEXTURE_2D);
 		glShadeModel(GL_SMOOTH);
 
@@ -39,7 +40,7 @@ void Quadnode::Render()
 	glTexCoord2f(0, 1); glVertex3f(v[3].x, v[3].y, v[3].z);
 	glEnd();
 
-	if(texture)
+	if(texture.get())
 	{
 		glDisable(GL_ALPHA_TEST);
 		glDisable(GL_TEXTURE_2D);
