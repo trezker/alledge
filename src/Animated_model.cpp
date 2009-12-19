@@ -16,6 +16,7 @@ Animated_model::~Animated_model()
 {
 	FreeModel (&md5file);
 	
+	//Todo: free the animations
 //	FreeAnim (&md5anim);
 
 }

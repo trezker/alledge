@@ -1,12 +1,7 @@
-#include "../alledge/Animated_model_instance.h"
-#include <fstream>
-#include "math/Vector3.h"
-#include "../alledge/Quadnode.h"
-#include <iostream>
-#include <cmath>
 #include <algorithm>
-#include <allegro5/allegro5.h>
-#include <allegro5/allegro_image.h>
+
+#include "../alledge/Animated_model_instance.h"
+#include "../alledge/Quadnode.h"
 
 Animated_model_instance::Animated_model_instance()
 {
@@ -25,7 +20,7 @@ Animated_model_instance::~Animated_model_instance()
 	}
 }
 
-void Animated_model_instance::Set_model(Animated_model* m)
+void Animated_model_instance::Set_model(shared_ptr<Animated_model> m)
 {
 	model = m;
 	if (allocated_skeleton)
@@ -36,12 +31,12 @@ void Animated_model_instance::Set_model(Animated_model* m)
 	allocated_skeleton = Create_skeleton(num_joints);
 }
 
-void Animated_model_instance::Add_model(Animated_model* m)
+void Animated_model_instance::Add_model(shared_ptr<Animated_model> m)
 {
 	models.push_back(m);
 }
 
-void Animated_model_instance::Remove_model(Animated_model* m)
+void Animated_model_instance::Remove_model(shared_ptr<Animated_model> m)
 {
 	Models::iterator i = std::find(models.begin(), models.end(), m);
 	models.erase(i);

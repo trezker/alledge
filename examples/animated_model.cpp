@@ -18,8 +18,8 @@ shared_ptr<Cameranode> camera;
 shared_ptr<Lightnode> light;
 shared_ptr<Transformnode> transform;
 shared_ptr<Transformnode> transform2;
-Animated_model* model;
-Animated_model* skirt_model;
+shared_ptr<Animated_model> model;
+shared_ptr<Animated_model> skirt_model;
 shared_ptr<Animated_model_instance> model_instance;
 shared_ptr<Animated_model_instance> model_instance2;
 
