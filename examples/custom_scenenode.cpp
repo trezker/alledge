@@ -11,7 +11,6 @@
 #include "../alledge/Lightnode.h"
 #include "../alledge/Quadnode.h"
 #include "../alledge/Transformnode.h"
-#include "../alledge/Animated_modelnode.h"
 #include <string>
 
 class Text: public Scenenode
