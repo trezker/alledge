@@ -4,6 +4,7 @@
 #include <vector>
 #include "math/Vector3.h"
 #include "Scenenode.h"
+#include "Quat.h"
 
 class Cameranode: public Scenenode
 {
@@ -32,7 +33,7 @@ private:
 	Vector3 up;
 	Vector3 front;
 	Vector3 right;
-	float matrix[16];
+	quat4_t quat_total;
 	
 	bool rotate_around_world_origo;
 };

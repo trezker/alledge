@@ -82,12 +82,44 @@ bool Init()
 	return true;
 }
 
+bool move_forward = false;
+bool move_backward = false;
+bool move_left = false;
+bool move_right = false;
+bool move_up = false;
+bool move_down = false;
+
 void Update(float dt)
 {
 	Vector3 rot = transform->Get_rotation();
 	rot.y += 30*dt;
 	rot.x += 60*dt;
 	transform->Set_rotation(rot);
+	
+	if(move_forward)
+	{
+		camera->Set_position(camera->Get_position() + camera->Get_front() * dt*10);
+	}
+	if(move_backward)
+	{
+		camera->Set_position(camera->Get_position() - camera->Get_front() * dt*10);
+	}
+	if(move_left)
+	{
+		camera->Set_position(camera->Get_position() - camera->Get_right() * dt*10);
+	}
+	if(move_right)
+	{
+		camera->Set_position(camera->Get_position() + camera->Get_right() * dt*10);
+	}
+	if(move_up)
+	{
+		camera->Set_position(camera->Get_position() + camera->Get_up() * dt*10);
+	}
+	if(move_down)
+	{
+		camera->Set_position(camera->Get_position() - camera->Get_up() * dt*10);
+	}
 }
 
 void Render()
@@ -111,8 +143,79 @@ void Render()
 	Pop_view();
 }
 
+bool lmb = false;
+
 void Event(ALLEGRO_EVENT event)
 {
+	if (ALLEGRO_EVENT_KEY_DOWN == event.type)
+	{
+		if (ALLEGRO_KEY_W == event.keyboard.keycode)
+		{
+			move_forward = true;
+		}
+		if (ALLEGRO_KEY_S == event.keyboard.keycode)
+		{
+			move_backward = true;
+		}
+		if (ALLEGRO_KEY_A == event.keyboard.keycode)
+		{
+			move_left = true;
+		}
+		if (ALLEGRO_KEY_D == event.keyboard.keycode)
+		{
+			move_right = true;
+		}
+		if (ALLEGRO_KEY_R == event.keyboard.keycode)
+		{
+			move_up = true;
+		}
+		if (ALLEGRO_KEY_F == event.keyboard.keycode)
+		{
+			move_down = true;
+		}
+	}
+	if (ALLEGRO_EVENT_KEY_UP == event.type)
+	{
+		if (ALLEGRO_KEY_W == event.keyboard.keycode)
+		{
+			move_forward = false;
+		}
+		if (ALLEGRO_KEY_S == event.keyboard.keycode)
+		{
+			move_backward = false;
+		}
+		if (ALLEGRO_KEY_A == event.keyboard.keycode)
+		{
+			move_left = false;
+		}
+		if (ALLEGRO_KEY_D == event.keyboard.keycode)
+		{
+			move_right = false;
+		}
+		if (ALLEGRO_KEY_R == event.keyboard.keycode)
+		{
+			move_up = false;
+		}
+		if (ALLEGRO_KEY_F == event.keyboard.keycode)
+		{
+			move_down = false;
+		}
+	}
+	if (ALLEGRO_EVENT_MOUSE_BUTTON_DOWN == event.type)
+	{
+		lmb = true;
+	}
+	if (ALLEGRO_EVENT_MOUSE_BUTTON_UP == event.type)
+	{
+		lmb = false;
+	}
+	if (ALLEGRO_EVENT_MOUSE_AXES == event.type)
+	{
+		if(lmb)
+		{
+			camera->Set_rotation(camera->Get_rotation() + Vector3(-event.mouse.dy, -event.mouse.dx, 0));
+		}
+	}
 }
 
 int main()

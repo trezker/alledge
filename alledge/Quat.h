@@ -15,6 +15,10 @@ enum {
 /**
  * Quaternion prototypes
  */
+void Quat_init(quat4_t q);
+void Quat_copy(const quat4_t in, quat4_t out);
+void Quat_from_axisangle(quat4_t q, float x, float y, float z, float w);
+
 void Quat_computeW (quat4_t q);
 void Quat_normalize (quat4_t q);
 void Quat_multQuat (const quat4_t qa, const quat4_t qb, quat4_t out);

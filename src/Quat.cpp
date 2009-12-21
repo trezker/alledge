@@ -8,6 +8,30 @@
  * Basic quaternion operations.
  */
 
+void Quat_init(quat4_t q)
+{
+	q[X] = 0;
+	q[Y] = 0;
+	q[Z] = 0;
+	q[W] = 1;
+}
+
+void Quat_copy(const quat4_t in, quat4_t out)
+{
+	out[X] = in[X];
+	out[Y] = in[Y];
+	out[Z] = in[Z];
+	out[W] = in[W];
+}
+
+void Quat_from_axisangle(quat4_t q, float x, float y, float z, float a)
+{
+	q[X] = x * sin( a/2);
+	q[Y] = y * sin( a/2);
+	q[Z] = z * sin( a/2);
+	q[W] = cos( a/2);
+}
+
 void
 Quat_computeW (quat4_t q)
 {
