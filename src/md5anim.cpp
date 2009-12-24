@@ -405,7 +405,7 @@ Animate (const struct md5_anim_t *anim, struct anim_info_t *animInfo, double dt)
 	animInfo->last_time += dt;
 
 	/* move to next frame */
-	if (animInfo->last_time >= animInfo->max_time)
+	while (animInfo->last_time >= animInfo->max_time)
 	{
 		animInfo->curr_frame++;
 		animInfo->next_frame++;
@@ -417,12 +417,12 @@ Animate (const struct md5_anim_t *anim, struct anim_info_t *animInfo, double dt)
 
 		if (animInfo->next_frame > maxFrames)
 			animInfo->next_frame = 0;
-	}
 
-	if(!animInfo->loop && maxFrames == animInfo->curr_frame)
-	{
-		animInfo->last_time = 0.0f;
-		return;
+		if(!animInfo->loop && maxFrames == animInfo->curr_frame)
+		{
+			animInfo->last_time = 0.0f;
+			return;
+		}
 	}
 }
 
