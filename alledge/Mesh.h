@@ -10,7 +10,7 @@ class Mesh
 public:
 	Mesh();
 	~Mesh();
-	void Set_up_buffers(struct md5_mesh_t *mesh);
+	void Set_up_buffers(struct md5_mesh_t *mesh, md5_joint_t *baseSkel);
 	void Prepare_frame(const struct md5_joint_t *skeleton);
 	void Render() const;
 private:

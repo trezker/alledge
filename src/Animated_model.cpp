@@ -16,8 +16,10 @@ Animated_model::~Animated_model()
 {
 	FreeModel (&md5file);
 	
-	//Todo: free the animations
-//	FreeAnim (&md5anim);
+	for(Animations::iterator i = animations.begin(); i!= animations.end(); ++i)
+	{
+		FreeAnim(&i->second);
+	}
 }
 
 void Animated_model::Set_texture(shared_ptr<Bitmap> t)
@@ -50,7 +52,7 @@ void Animated_model::Load_model(const std::string& filename)
 		texture = new Bitmap;
 		texture->Load(md5file.meshes[i].shader);
 		meshbuffers.push_back(Mesh());
-		meshbuffers[i].Set_up_buffers(&md5file.meshes[i]);
+		meshbuffers[i].Set_up_buffers(&md5file.meshes[i], md5file.baseSkel);
 	}
 }
 

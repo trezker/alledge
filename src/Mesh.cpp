@@ -41,7 +41,7 @@ Mesh::~Mesh()
 	}
 }
 
-void Mesh::Set_up_buffers(struct md5_mesh_t *imesh)
+void Mesh::Set_up_buffers(struct md5_mesh_t *imesh, md5_joint_t *skeleton)
 {
 	mesh = imesh;
 	vertexArray = (vec3_t *)malloc (sizeof (vec3_t) * mesh->num_verts);
@@ -63,10 +63,7 @@ void Mesh::Set_up_buffers(struct md5_mesh_t *imesh)
 		texCoords[i*2] = mesh->vertices[i].st[0];
 		texCoords[i*2+1] = 1-mesh->vertices[i].st[1];
 	}
-}
 
-void Mesh::Prepare_frame(const struct md5_joint_t *skeleton)
-{
 
 	/* Setup vertices */
 	for (int i = 0; i < mesh->num_verts; ++i)
@@ -101,6 +98,7 @@ void Mesh::Prepare_frame(const struct md5_joint_t *skeleton)
 		normals[i][1] = 0;
 		normals[i][2] = 0;
 	}
+
 	/* Setup normals */
 	for (int i = 0; i < mesh->num_tris; ++i)
 	{
@@ -154,6 +152,36 @@ void Mesh::Prepare_frame(const struct md5_joint_t *skeleton)
 		normals[i][0] = x;
 		normals[i][1] = y;
 		normals[i][2] = z;
+	}
+}
+
+void Mesh::Prepare_frame(const struct md5_joint_t *skeleton)
+{
+
+	/* Setup vertices */
+	for (int i = 0; i < mesh->num_verts; ++i)
+	{
+		vec3_t finalVertex = { 0.0f, 0.0f, 0.0f };
+
+		/* Calculate final vertex to draw with weights */
+		for (int j = 0; j < mesh->vertices[i].count; ++j)
+		{
+			const struct md5_weight_t *weight = &mesh->weights[mesh->vertices[i].start + j];
+			const struct md5_joint_t *joint = &skeleton[weight->joint];
+
+			/* Calculate transformed vertex for this weight */
+			vec3_t wv;
+			Quat_rotatePoint (joint->orient, weight->pos, wv);
+
+			/* The sum of all weight->bias should be 1.0 */
+			finalVertex[0] += (joint->pos[0] + wv[0]) * weight->bias;
+			finalVertex[1] += (joint->pos[1] + wv[1]) * weight->bias;
+			finalVertex[2] += (joint->pos[2] + wv[2]) * weight->bias;
+		}
+
+		vertexArray[i][0] = finalVertex[0];
+		vertexArray[i][1] = finalVertex[1];
+		vertexArray[i][2] = finalVertex[2];
 	}
 }
 
