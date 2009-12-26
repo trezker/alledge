@@ -9,6 +9,7 @@
 #include <map>
 #include "math/Vector3.h"
 #include "md5model.h"
+#include "Mesh.h"
 class Bitmap;
 
 class Animated_model
@@ -43,6 +44,9 @@ private:
 
 	typedef std::map<std::string, int> Bones;
 	Bones bones;
+	
+	typedef std::vector<Mesh> Meshbuffers;
+	Meshbuffers meshbuffers;
 };
 
 #endif

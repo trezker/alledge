@@ -18,7 +18,6 @@ Animated_model::~Animated_model()
 	
 	//Todo: free the animations
 //	FreeAnim (&md5anim);
-
 }
 
 void Animated_model::Set_texture(shared_ptr<Bitmap> t)
@@ -50,6 +49,8 @@ void Animated_model::Load_model(const std::string& filename)
 	{
 		texture = new Bitmap;
 		texture->Load(md5file.meshes[i].shader);
+		meshbuffers.push_back(Mesh());
+		meshbuffers[i].Set_up_buffers(&md5file.meshes[i]);
 	}
 }
 
@@ -86,7 +87,13 @@ void Animated_model::Render()
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
 	glColor3f (1.0f, 1.0f, 1.0f);
 
-	Draw_model(md5file, skeleton);
+	for(int i = 0; i<md5file.num_meshes; ++i)
+	{
+		meshbuffers[i].Prepare_frame(skeleton);
+		meshbuffers[i].Render();
+	}
+	
+//	Draw_model(md5file, skeleton);
 
 	/* Draw skeleton */
 /*	glDisable(GL_DEPTH_TEST);
