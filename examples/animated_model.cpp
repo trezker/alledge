@@ -11,7 +11,7 @@
 #include "../alledge/Lightnode.h"
 #include "../alledge/Quadnode.h"
 #include "../alledge/Transformnode.h"
-#include "../alledge/Animated_model_instance.h"
+#include "../alledge/Animated_model_node.h"
 
 Scenenode root;
 shared_ptr<Cameranode> camera;
@@ -20,8 +20,8 @@ shared_ptr<Transformnode> transform;
 shared_ptr<Transformnode> transform2;
 shared_ptr<Animated_model> model;
 shared_ptr<Animated_model> skirt_model;
-shared_ptr<Animated_model_instance> model_instance;
-shared_ptr<Animated_model_instance> model_instance2;
+shared_ptr<Animated_model_node> model_node;
+shared_ptr<Animated_model_node> model_node2;
 
 bool Init()
 {
@@ -52,19 +52,19 @@ bool Init()
 	skirt_model = new Animated_model;
 	skirt_model->Load_model("data/Male.md5mesh");
 
-	model_instance = new Animated_model_instance;
-	model_instance->Set_model(model);
-	model_instance->Add_model(skirt_model);
-	model_instance->Play_animation("walk", true);
-	transform->Attach_node(model_instance);
+	model_node = new Animated_model_node;
+	model_node->Set_model(model);
+	model_node->Add_model(skirt_model);
+	model_node->Play_animation("walk", true);
+	transform->Attach_node(model_node);
 	transform->Set_position(Vector3(0, 0, 0));
 
-	model_instance2 = new Animated_model_instance;
-	model_instance2->Set_model(model);
-	model_instance2->Play_animation("run", true);
-	transform2->Attach_node(model_instance2);
+	model_node2 = new Animated_model_node;
+	model_node2->Set_model(model);
+	model_node2->Play_animation("run", true);
+	transform2->Attach_node(model_node2);
 	transform2->Set_position(Vector3(-10, 0, 0));
-	model_instance->Attach_to_bone("Hand.L", transform2);
+	model_node->Attach_to_bone("Hand.L", transform2);
 	return true;
 }
 
@@ -74,8 +74,8 @@ void Update(float dt)
 	rot.y += 30*dt;
 	transform->Set_rotation(rot);
 	transform2->Set_rotation(rot);
-	model_instance->Update(dt);
-	model_instance2->Update(dt);
+	model_node->Update(dt);
+	model_node2->Update(dt);
 }
 
 void Render()

@@ -1,5 +1,5 @@
-#ifndef Animated_model_instance_h
-#define Animated_model_instance_h
+#ifndef Animated_model_node_h
+#define Animated_model_node_h
 
 #include "Scenenode.h"
 #include <string>
@@ -12,11 +12,11 @@
 //Todo: Add texture here that can override the models default texture.
 //Todo: All shared pointers plz
 
-class Animated_model_instance: public Scenenode
+class Animated_model_node: public Scenenode
 {
 public:
-	Animated_model_instance();
-	~Animated_model_instance();
+	Animated_model_node();
+	~Animated_model_node();
 
 	void Play_animation(const std::string& name, bool loop);
 	void Pause_animation(bool b);

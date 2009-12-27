@@ -1,9 +1,9 @@
 #include <algorithm>
 
-#include "../alledge/Animated_model_instance.h"
+#include "../alledge/Animated_model_node.h"
 #include "../alledge/Quadnode.h"
 
-Animated_model_instance::Animated_model_instance()
+Animated_model_node::Animated_model_node()
 {
 	paused = false;
 	model = NULL;
@@ -11,7 +11,7 @@ Animated_model_instance::Animated_model_instance()
 	allocated_skeleton = NULL;
 }
 
-Animated_model_instance::~Animated_model_instance()
+Animated_model_node::~Animated_model_node()
 {
 	if (allocated_skeleton)
 	{
@@ -20,7 +20,7 @@ Animated_model_instance::~Animated_model_instance()
 	}
 }
 
-void Animated_model_instance::Set_model(shared_ptr<Animated_model> m)
+void Animated_model_node::Set_model(shared_ptr<Animated_model> m)
 {
 	model = m;
 	if (allocated_skeleton)
@@ -31,18 +31,18 @@ void Animated_model_instance::Set_model(shared_ptr<Animated_model> m)
 	allocated_skeleton = Create_skeleton(num_joints);
 }
 
-void Animated_model_instance::Add_model(shared_ptr<Animated_model> m)
+void Animated_model_node::Add_model(shared_ptr<Animated_model> m)
 {
 	models.push_back(m);
 }
 
-void Animated_model_instance::Remove_model(shared_ptr<Animated_model> m)
+void Animated_model_node::Remove_model(shared_ptr<Animated_model> m)
 {
 	Models::iterator i = std::find(models.begin(), models.end(), m);
 	models.erase(i);
 }
 
-void Animated_model_instance::Attach_to_bone(const std::string& bone, shared_ptr<Scenenode> node)
+void Animated_model_node::Attach_to_bone(const std::string& bone, shared_ptr<Scenenode> node)
 {
 	if(model->Has_bone(bone))
 	{
@@ -50,13 +50,13 @@ void Animated_model_instance::Attach_to_bone(const std::string& bone, shared_ptr
 	}
 }
 
-void Animated_model_instance::Detach_from_bone(const std::string& bone, shared_ptr<Scenenode> node)
+void Animated_model_node::Detach_from_bone(const std::string& bone, shared_ptr<Scenenode> node)
 {
 	Attachments::iterator i = std::find(bone_attachments[bone].begin(), bone_attachments[bone].end(), node);
 	bone_attachments[bone].erase(i);
 }
 
-void Animated_model_instance::Render()
+void Animated_model_node::Render()
 {
 	model->Set_skeleton(allocated_skeleton);
 	model->Render();
@@ -79,7 +79,7 @@ void Animated_model_instance::Render()
 	}
 }
 
-void Animated_model_instance::Update(double dt)
+void Animated_model_node::Update(double dt)
 {
 	if (active_animation)
 	{
@@ -102,12 +102,12 @@ void Animated_model_instance::Update(double dt)
 	}
 }
 
-void Animated_model_instance::Pause_animation(bool b)
+void Animated_model_node::Pause_animation(bool b)
 {
 	paused = b;
 }
 
-void Animated_model_instance::Play_animation(const std::string& name, bool loop)
+void Animated_model_node::Play_animation(const std::string& name, bool loop)
 {
 	active_animation = model->Get_animation(name);
 	if(active_animation)
@@ -121,7 +121,7 @@ void Animated_model_instance::Play_animation(const std::string& name, bool loop)
 	}
 }
 
-bool Animated_model_instance::Animation_has_ended()
+bool Animated_model_node::Animation_has_ended()
 {
 	if(active_animation)
 	{
