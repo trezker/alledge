@@ -12,17 +12,21 @@
 #include "Mesh.h"
 class Bitmap;
 
+typedef std::vector<Mesh> Meshbuffers;
+
 class Animated_model
 {
 public:
 	Animated_model();
 	~Animated_model();
 	void Set_texture(shared_ptr<Bitmap> t);
+	shared_ptr<Bitmap> Get_texture() const;
 	void Load_model(const std::string& filename);
 	void Load_animation(const std::string& filename, const std::string& name);
 
 	md5_anim_t* Get_animation(const std::string& name);
 	int Get_num_joints();
+	void New_buffers(Meshbuffers& buffers);
 
 	bool Has_bone(const std::string& bone);
 	
@@ -44,8 +48,7 @@ private:
 
 	typedef std::map<std::string, int> Bones;
 	Bones bones;
-	
-	typedef std::vector<Mesh> Meshbuffers;
+
 	Meshbuffers meshbuffers;
 };
 

@@ -5,32 +5,35 @@
 
 Animated_model_node::Animated_model_node()
 {
-	paused = false;
+//	paused = false;
 	model = NULL;
-	active_animation = NULL;
-	allocated_skeleton = NULL;
+//	active_animation = NULL;
+//	allocated_skeleton = NULL;
 }
 
 Animated_model_node::~Animated_model_node()
 {
-	if (allocated_skeleton)
+/*	if (allocated_skeleton)
 	{
 		Destroy_skeleton(allocated_skeleton);
 		allocated_skeleton = NULL;
 	}
+*/
 }
 
-void Animated_model_node::Set_model(shared_ptr<Animated_model> m)
+//void Animated_model_node::Set_model(shared_ptr<Animated_model> m)
+void Animated_model_node::Set_model(shared_ptr<Animated_model_instance> m)
 {
 	model = m;
-	if (allocated_skeleton)
+/*	if (allocated_skeleton)
 	{
 		Destroy_skeleton(allocated_skeleton);
 	}
 	int num_joints = model->Get_num_joints();
 	allocated_skeleton = Create_skeleton(num_joints);
+*/
 }
-
+/*
 void Animated_model_node::Add_model(shared_ptr<Animated_model> m)
 {
 	models.push_back(m);
@@ -55,10 +58,14 @@ void Animated_model_node::Detach_from_bone(const std::string& bone, shared_ptr<S
 	Attachments::iterator i = std::find(bone_attachments[bone].begin(), bone_attachments[bone].end(), node);
 	bone_attachments[bone].erase(i);
 }
-
+*/
 void Animated_model_node::Render()
 {
-	model->Set_skeleton(allocated_skeleton);
+//	glPushMatrix();
+//	glRotatef (-90.f, 1.0f, .0f, .0f);
+	model->Render();
+//	glPopMatrix();
+/*	model->Set_skeleton(allocated_skeleton);
 	model->Render();
 	for(Models::iterator i = models.begin(); i!=models.end(); ++i)
 	{
@@ -77,19 +84,20 @@ void Animated_model_node::Render()
 		}
 		glPopMatrix();
 	}
+*/
 }
-
+/*
 void Animated_model_node::Update(double dt)
 {
 	if (active_animation)
 	{
-		/* Calculate current and next frames */
+		// Calculate current and next frames 
 		if(!paused)
 		{
 			Animate (active_animation, &animInfo, dt);
 		}
 
-		/* Interpolate skeletons between two frames */
+		// Interpolate skeletons between two frames 
 		InterpolateSkeletons (active_animation->skelFrames[animInfo.curr_frame],
 			active_animation->skelFrames[animInfo.next_frame],
 			active_animation->num_joints,
@@ -98,7 +106,7 @@ void Animated_model_node::Update(double dt)
 	}
 	else
 	{
-		/* No animation, use bind-pose skeleton */
+		// No animation, use bind-pose skeleton 
 	}
 }
 
@@ -130,3 +138,4 @@ bool Animated_model_node::Animation_has_ended()
 	}
 	return false;
 }
+*/

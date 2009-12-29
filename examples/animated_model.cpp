@@ -19,9 +19,10 @@ shared_ptr<Lightnode> light;
 shared_ptr<Transformnode> transform;
 shared_ptr<Transformnode> transform2;
 shared_ptr<Animated_model> model;
-shared_ptr<Animated_model> skirt_model;
+//shared_ptr<Animated_model> skirt_model;
+shared_ptr<Animated_model_instance> model_instance;
 shared_ptr<Animated_model_node> model_node;
-shared_ptr<Animated_model_node> model_node2;
+//shared_ptr<Animated_model_node> model_node2;
 
 bool Init()
 {
@@ -49,23 +50,27 @@ bool Init()
 	model->Load_model("data/Male.md5mesh");
 	model->Load_animation("data/Male_walk.md5anim", "walk");
 	model->Load_animation("data/Male_run.md5anim", "run");
-	skirt_model = new Animated_model;
-	skirt_model->Load_model("data/Male.md5mesh");
+//	skirt_model = new Animated_model;
+//	skirt_model->Load_model("data/Male.md5mesh");
+
+	model_instance = new Animated_model_instance;
+	model_instance->Set_model(model);
+	model_instance->Play_animation("walk", true);
 
 	model_node = new Animated_model_node;
-	model_node->Set_model(model);
-	model_node->Add_model(skirt_model);
-	model_node->Play_animation("walk", true);
+	model_node->Set_model(model_instance);
+//	model_node->Add_model(skirt_model);
+//	model_node->Play_animation("walk", true);
 	transform->Attach_node(model_node);
 	transform->Set_position(Vector3(0, 0, 0));
-
+/*
 	model_node2 = new Animated_model_node;
 	model_node2->Set_model(model);
 	model_node2->Play_animation("run", true);
 	transform2->Attach_node(model_node2);
 	transform2->Set_position(Vector3(-10, 0, 0));
 	model_node->Attach_to_bone("Hand.L", transform2);
-	return true;
+*/	return true;
 }
 
 void Update(float dt)
@@ -74,8 +79,8 @@ void Update(float dt)
 	rot.y += 30*dt;
 	transform->Set_rotation(rot);
 	transform2->Set_rotation(rot);
-	model_node->Update(dt);
-	model_node2->Update(dt);
+	model_instance->Update(dt);
+//	model_node2->Update(dt);
 }
 
 void Render()

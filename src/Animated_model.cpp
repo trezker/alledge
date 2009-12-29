@@ -27,6 +27,11 @@ void Animated_model::Set_texture(shared_ptr<Bitmap> t)
 	texture = t;
 }
 
+shared_ptr<Bitmap> Animated_model::Get_texture() const
+{
+	return texture;
+}
+
 int Animated_model::Get_num_joints()
 {
 	return md5file.num_joints;
@@ -53,6 +58,15 @@ void Animated_model::Load_model(const std::string& filename)
 		texture->Load(md5file.meshes[i].shader);
 		meshbuffers.push_back(Mesh());
 		meshbuffers[i].Set_up_buffers(&md5file.meshes[i], md5file.baseSkel);
+	}
+}
+
+void Animated_model::New_buffers(Meshbuffers& buffers)
+{
+	for(int i = 0; i<md5file.num_meshes; ++i)
+	{
+		buffers.push_back(Mesh());
+		buffers[i].Set_up_buffers(&md5file.meshes[i], md5file.baseSkel);
 	}
 }
 
