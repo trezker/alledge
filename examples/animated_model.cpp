@@ -31,7 +31,7 @@ shared_ptr<Static_model_node> static_model_node;
 bool Init()
 {
 	camera = new Cameranode();
-	camera->Set_position(Vector3(0, 8, 50));
+	camera->Set_position(Vector3(0, 8, 30));
 	camera->Set_rotation(Vector3(0, 0, 0));
 	root.Attach_node(camera);
 
@@ -84,7 +84,8 @@ bool Init()
 
 	static_model_node = new Static_model_node;
 	static_model_node->Set_model(static_model);
-	model_node->Attach_to_bone("Hand.L", static_model_node);
+	model_node->Attach_to_bone("Hand.Grip.L", static_model_node);
+	model_node->Attach_to_bone("Hand.Grip.R", static_model_node);
 
 	return true;
 }
