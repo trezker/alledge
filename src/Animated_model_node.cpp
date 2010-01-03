@@ -5,34 +5,18 @@
 
 Animated_model_node::Animated_model_node()
 {
-//	paused = false;
 	model = NULL;
-//	active_animation = NULL;
-//	allocated_skeleton = NULL;
 }
 
 Animated_model_node::~Animated_model_node()
 {
-/*	if (allocated_skeleton)
-	{
-		Destroy_skeleton(allocated_skeleton);
-		allocated_skeleton = NULL;
-	}
-*/
 }
 
-//void Animated_model_node::Set_model(shared_ptr<Animated_model> m)
 void Animated_model_node::Set_model(shared_ptr<Animated_model_instance> m)
 {
 	model = m;
-/*	if (allocated_skeleton)
-	{
-		Destroy_skeleton(allocated_skeleton);
-	}
-	int num_joints = model->Get_num_joints();
-	allocated_skeleton = Create_skeleton(num_joints);
-*/
 }
+
 /*
 void Animated_model_node::Add_model(shared_ptr<Animated_model> m)
 {
@@ -44,7 +28,7 @@ void Animated_model_node::Remove_model(shared_ptr<Animated_model> m)
 	Models::iterator i = std::find(models.begin(), models.end(), m);
 	models.erase(i);
 }
-
+*/
 void Animated_model_node::Attach_to_bone(const std::string& bone, shared_ptr<Scenenode> node)
 {
 	if(model->Has_bone(bone))
@@ -58,7 +42,7 @@ void Animated_model_node::Detach_from_bone(const std::string& bone, shared_ptr<S
 	Attachments::iterator i = std::find(bone_attachments[bone].begin(), bone_attachments[bone].end(), node);
 	bone_attachments[bone].erase(i);
 }
-*/
+
 void Animated_model_node::Render()
 {
 //	glPushMatrix();
@@ -72,7 +56,7 @@ void Animated_model_node::Render()
 		(*i)->Set_skeleton(allocated_skeleton);
 		(*i)->Render();
 	}
-
+*/
 	for(Bone_attachments::iterator i = bone_attachments.begin(); i!=bone_attachments.end(); ++i)
 	{
 		glPushMatrix();
@@ -84,58 +68,4 @@ void Animated_model_node::Render()
 		}
 		glPopMatrix();
 	}
-*/
 }
-/*
-void Animated_model_node::Update(double dt)
-{
-	if (active_animation)
-	{
-		// Calculate current and next frames 
-		if(!paused)
-		{
-			Animate (active_animation, &animInfo, dt);
-		}
-
-		// Interpolate skeletons between two frames 
-		InterpolateSkeletons (active_animation->skelFrames[animInfo.curr_frame],
-			active_animation->skelFrames[animInfo.next_frame],
-			active_animation->num_joints,
-			animInfo.last_time * active_animation->frameRate,
-			allocated_skeleton);
-	}
-	else
-	{
-		// No animation, use bind-pose skeleton 
-	}
-}
-
-void Animated_model_node::Pause_animation(bool b)
-{
-	paused = b;
-}
-
-void Animated_model_node::Play_animation(const std::string& name, bool loop)
-{
-	active_animation = model->Get_animation(name);
-	if(active_animation)
-	{
-		animInfo.curr_frame = 0;
-		animInfo.next_frame = 1;
-
-		animInfo.last_time = 0;
-		animInfo.max_time = 1.0 / active_animation->frameRate;
-		animInfo.loop = loop;
-	}
-}
-
-bool Animated_model_node::Animation_has_ended()
-{
-	if(active_animation)
-	{
-		if(animInfo.next_frame == 0)
-			return true;
-	}
-	return false;
-}
-*/

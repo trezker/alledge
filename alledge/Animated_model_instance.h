@@ -21,6 +21,9 @@ public:
 
 	void Set_model(shared_ptr<Animated_model> m);
 
+	bool Has_bone(const std::string& bone);
+	void Apply_bone(const std::string& name);
+
 	void Render();
 	
 	void Update(double dt);

@@ -12,6 +12,8 @@
 #include "../alledge/Quadnode.h"
 #include "../alledge/Transformnode.h"
 #include "../alledge/Animated_model_node.h"
+#include "../alledge/Static_model_node.h"
+#include "../alledge/Bitmap.h"
 
 Scenenode root;
 shared_ptr<Cameranode> camera;
@@ -23,6 +25,8 @@ shared_ptr<Animated_model> model;
 shared_ptr<Animated_model_instance> model_instance;
 shared_ptr<Animated_model_node> model_node;
 //shared_ptr<Animated_model_node> model_node2;
+shared_ptr<Static_model> static_model;
+shared_ptr<Static_model_node> static_model_node;
 
 bool Init()
 {
@@ -70,7 +74,19 @@ bool Init()
 	transform2->Attach_node(model_node2);
 	transform2->Set_position(Vector3(-10, 0, 0));
 	model_node->Attach_to_bone("Hand.L", transform2);
-*/	return true;
+*/
+
+	static_model = new Static_model;
+	static_model->Load_model("data/handgun.tmf");
+	shared_ptr<Bitmap> texture = new Bitmap;
+	if(texture->Load("data/handgun.png"))
+		static_model->Set_texture(texture);
+
+	static_model_node = new Static_model_node;
+	static_model_node->Set_model(static_model);
+	model_node->Attach_to_bone("Hand.L", static_model_node);
+
+	return true;
 }
 
 void Update(float dt)

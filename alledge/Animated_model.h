@@ -34,6 +34,7 @@ public:
 
 	void Render();
 	void Apply_bone(const std::string& name);
+	void Apply_bone(const std::string& name, md5_joint_t *skeleton);
 	
 	void Update(double dt);
 private:

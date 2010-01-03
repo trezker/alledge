@@ -125,3 +125,13 @@ bool Animated_model_instance::Animation_has_ended()
 	}
 	return false;
 }
+
+void Animated_model_instance::Apply_bone(const std::string& name)
+{
+	model->Apply_bone(name, allocated_skeleton);
+}
+
+bool Animated_model_instance::Has_bone(const std::string& bone)
+{
+	return model->Has_bone(bone);
+}

@@ -127,6 +127,18 @@ void Animated_model::Render()
 	}
 }
 
+void Animated_model::Apply_bone(const std::string& name, md5_joint_t *skel)
+{
+	md5_joint_t bone = skel[bones[name]];
+	quat4_t &orient = bone.orient;
+	glRotatef (-90.f, 1.0f, .0f, .0f);
+	glTranslatef(bone.pos[0], bone.pos[1], bone.pos[2]);
+	matrix4_t m4;
+	Quat_to_matrix4(orient, m4);
+	glMultTransposeMatrixf(m4);
+	glRotatef (90.f, 1.0f, .0f, .0f);
+}
+
 void Animated_model::Apply_bone(const std::string& name)
 {
 	md5_joint_t bone = skeleton[bones[name]];
