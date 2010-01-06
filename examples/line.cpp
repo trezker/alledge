@@ -11,6 +11,7 @@
 #include "../alledge/Lightnode.h"
 #include "../alledge/Linenode.h"
 #include "../alledge/Transformnode.h"
+#include <cmath>
 
 Scenenode root;
 shared_ptr<Cameranode> camera;
@@ -21,7 +22,7 @@ shared_ptr<Linenode> line;
 bool Init()
 {
 	camera = new Cameranode();
-	camera->Set_position(Vector3(0, 0, 10));
+	camera->Set_position(Vector3(0, 0, 30));
 	camera->Set_rotation(Vector3(0, 0, 0));
 	root.Attach_node(camera);
 
@@ -36,7 +37,7 @@ bool Init()
 
 	float color[4] = {1, 1, 1, 1};
 	line = new Linenode;
-	line->Set_line(Vector3(0, 0, 0), Vector3(10, 10, -10));
+	line->Set_line(Vector3(-10, 10, 0), Vector3(10, 10, 0));
 	line->Set_color(color);
 	transform->Attach_node(line);
 	return true;
@@ -49,13 +50,21 @@ bool move_right = false;
 bool move_up = false;
 bool move_down = false;
 
+float alpha = 1;
+
 void Update(float dt)
 {
 	Vector3 rot = transform->Get_rotation();
-	rot.y += 30*dt;
-	rot.x += 60*dt;
+//	rot.y += 30*dt;
+//	rot.x += 60*dt;
+//	rot.z += 10*dt;
 	transform->Set_rotation(rot);
-	
+
+	alpha += 1*dt;
+	if(alpha>1) alpha = 0;
+	float color[4] = {1, 0, 0, alpha};
+	line->Set_color(color);
+
 	if(move_forward)
 	{
 		camera->Set_position(camera->Get_position() + camera->Get_front() * dt*10);

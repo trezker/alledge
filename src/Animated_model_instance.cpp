@@ -41,8 +41,8 @@ void Animated_model_instance::Render()
 		glBindTexture(GL_TEXTURE_2D, texture->get_opengl_texture());
 		glEnable(GL_TEXTURE_2D);
 		glShadeModel(GL_SMOOTH);
-		glAlphaFunc(GL_GREATER,0.1f);
-		glEnable(GL_ALPHA_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 	glPushMatrix();
 	glRotatef (-90.f, 1.0f, .0f, .0f);
@@ -51,7 +51,7 @@ void Animated_model_instance::Render()
 	GLfloat diffuse[]= { 0.8f, 0.8f, 0.8f, 1.0f };
 	glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
-	glColor3f (1.0f, 1.0f, 1.0f);
+	glColor4f (1.0f, 1.0f, 1.0f, 0.5f);
 
 	for(Meshbuffers::iterator i = meshbuffers.begin(); i != meshbuffers.end(); ++i)
 	{
@@ -62,10 +62,9 @@ void Animated_model_instance::Render()
 
 	if(texture.get())
 	{
-		glDisable(GL_ALPHA_TEST);
 		glDisable(GL_TEXTURE_2D);
 		glShadeModel(GL_FLAT);
-		glDisable(GL_ALPHA_TEST);
+		glDisable(GL_BLEND);
 	}
 }
 

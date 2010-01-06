@@ -19,13 +19,18 @@ void Linenode::Set_color(float *v)
 
 void Linenode::Render()
 {
-//	glAlphaFunc(GL_GREATER,0.1f);
-//	glEnable(GL_ALPHA_TEST);
+	glDisable(GL_ALPHA_TEST);
+	glDisable(GL_LIGHTING);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);//
 
+	glLineWidth(2);
 	glBegin(GL_LINES);
+	glColor4fv(color);
 	glVertex3f(start.x, start.y, start.z);
 	glVertex3f(end.x, end.y, end.z);
 	glEnd();
 
-//	glDisable(GL_ALPHA_TEST);
+	glDisable(GL_BLEND);
+	glEnable(GL_LIGHTING);
 }
