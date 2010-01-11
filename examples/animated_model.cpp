@@ -28,6 +28,8 @@ shared_ptr<Animated_model_node> model_node;
 shared_ptr<Static_model> static_model;
 shared_ptr<Static_model_node> static_model_node;
 
+Vector3 scale;
+
 bool Init()
 {
 	camera = new Cameranode();
@@ -87,6 +89,8 @@ bool Init()
 	model_node->Attach_to_bone("Hand.Grip.L", static_model_node);
 	model_node->Attach_to_bone("Hand.Grip.R", static_model_node);
 
+	scale.Set(1, 1, 1);
+
 	return true;
 }
 
@@ -98,6 +102,8 @@ void Update(float dt)
 	transform2->Set_rotation(rot);
 	model_instance->Update(dt);
 //	model_node2->Update(dt);
+
+	transform->Set_scale(scale);
 }
 
 void Render()
@@ -121,8 +127,45 @@ void Render()
 	Pop_view();
 }
 
+bool x = false;
+bool y = false;
+bool z = false;
+
 void Event(ALLEGRO_EVENT event)
 {
+	if (ALLEGRO_EVENT_KEY_DOWN == event.type)
+	{
+		if (ALLEGRO_KEY_X == event.keyboard.keycode)
+		{
+			x = !x;
+		}
+		if (ALLEGRO_KEY_Y == event.keyboard.keycode)
+		{
+			y = !y;
+		}
+		if (ALLEGRO_KEY_Z == event.keyboard.keycode)
+		{
+			z = !z;
+		}
+		if (ALLEGRO_KEY_PAD_PLUS == event.keyboard.keycode)
+		{
+			if(x)
+				scale.x += .1;
+			if(y)
+				scale.y += .1;
+			if(z)
+				scale.z += .1;
+		}
+		if (ALLEGRO_KEY_PAD_MINUS == event.keyboard.keycode)
+		{
+			if(x)
+				scale.x -= .1;
+			if(y)
+				scale.y -= .1;
+			if(z)
+				scale.z -= .1;
+		}
+	}
 }
 
 int main()
