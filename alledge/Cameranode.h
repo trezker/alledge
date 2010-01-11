@@ -2,7 +2,7 @@
 #define Cameranode_h
 
 #include <vector>
-#include "math/Vector3.h"
+#include "Vector3.h"
 #include "Scenenode.h"
 #include "Quat.h"
 

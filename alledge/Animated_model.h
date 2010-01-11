@@ -7,7 +7,7 @@
 #include <allegro5/allegro_opengl.h>
 #include <vector>
 #include <map>
-#include "math/Vector3.h"
+#include "Vector3.h"
 #include "md5model.h"
 #include "Mesh.h"
 class Bitmap;

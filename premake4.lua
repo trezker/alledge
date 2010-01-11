@@ -28,8 +28,8 @@ solution (lib_name)
 			language "C++"
 			location "build"
 			files { name }
-			includedirs { "../include" }
-			libdirs { "../lib" }
+--			includedirs { "../include" }
+--			libdirs { "../lib" }
 			links (lib_name)
 			links (dependencies)
 			targetdir "build/tests"
@@ -45,8 +45,8 @@ solution (lib_name)
 			language "C++"
 			location "build"
 			files { name }
-			includedirs { "../include" }
-			libdirs { "../lib" }
+--			includedirs { "../include" }
+--			libdirs { "../lib" }
 			links (lib_name)
 			links (ex_dependencies)
 			targetdir "build/examples"
