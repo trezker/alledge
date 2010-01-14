@@ -50,7 +50,7 @@ solution (lib_name)
 			links (lib_name)
 			links (ex_dependencies)
 			targetdir "build/examples"
-			postbuildcommands { "cd .. && build/examples/"..sname }
+--			postbuildcommands { "cd .. && build/examples/"..sname }
 	end
 
 newoption {
