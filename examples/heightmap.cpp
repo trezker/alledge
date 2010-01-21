@@ -12,6 +12,8 @@
 #include "../alledge/Heightmap.h"
 #include "../alledge/Transformnode.h"
 #include "../alledge/Linenode.h"
+#include "../alledge/Bitmap.h"
+#include <fstream>
 #include <cmath>
 
 Scenenode root;
@@ -20,9 +22,38 @@ shared_ptr<Lightnode> light;
 shared_ptr<Transformnode> transform;
 shared_ptr<Heightmap> heightmap;
 shared_ptr<Linenode> line;
+shared_ptr<Bitmap> texture;
+shared_ptr<Bitmap> texture2;
+shared_ptr<Bitmap> splat_texture;
 
 bool Init()
 {
+	int MaxTextureImageUnits;
+	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &MaxTextureImageUnits);
+	std::cout<<"Max texture units: "<<MaxTextureImageUnits<<std::endl;
+
+	texture = new Bitmap;
+	texture->Load("data/darwinian.png");
+	if(!texture)
+	{
+		std::cout<<"ERROR: Could not load darwinian.png"<<std::endl;
+		return false;
+	}
+	texture2 = new Bitmap;
+	texture2->Load("data/Colormap.png");
+	if(!texture2)
+	{
+		std::cout<<"ERROR: Could not load Colormap.png"<<std::endl;
+		return false;
+	}
+	splat_texture = new Bitmap;
+	splat_texture->Load("data/splat_texture.png");
+	if(!splat_texture)
+	{
+		std::cout<<"ERROR: Could not load splat_texture.png"<<std::endl;
+		return false;
+	}
+
 	camera = new Cameranode();
 	camera->Set_position(Vector3(0, 0, 30));
 	camera->Set_rotation(Vector3(0, 0, 0));
@@ -46,6 +77,9 @@ bool Init()
 	heightmap = new Heightmap;
 	heightmap->Set_tilesize(1);
 	heightmap->Resize(10, 5);
+	heightmap->Set_texture(texture, 0);
+	heightmap->Set_texture(texture2, 1);
+	heightmap->Set_splat_texture(splat_texture);
 	transform->Attach_node(heightmap);
 	return true;
 }
