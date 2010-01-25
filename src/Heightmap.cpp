@@ -37,6 +37,10 @@ Heightmap::Heightmap()
 	glUniform1i(location, 1);
 	location = shader_program->Get_uniform_location("tex2"); 
 	glUniform1i(location, 2);
+	location = shader_program->Get_uniform_location("tex3"); 
+	glUniform1i(location, 3);
+	location = shader_program->Get_uniform_location("tex4"); 
+	glUniform1i(location, 4);
 }
 
 Heightmap::~Heightmap()
@@ -58,18 +62,19 @@ void Heightmap::Set_splat_texture(shared_ptr<Bitmap> t)
 
 void Heightmap::Set_texture(shared_ptr<Bitmap> t, int channel)
 {
-	if(channel<0 || channel>2)
+	if(channel<0 || channel>3)
 		return; //Invalid channel
 	texture[channel] = t;
 
 	char loc_name[10];
-	sprintf(loc_name, "use_tex%i\0", channel);
+	sprintf(loc_name, "use_tex%i\0", channel+1);
 	shader_program->Use();
 	GLint location = shader_program->Get_uniform_location(loc_name); 
 	if(t.get())
 		glUniform1i(location, 1);
 	else
 		glUniform1i(location, 0);
+	glUseProgram(0);
 }
 
 void Heightmap::Load(const std::string& filename)
@@ -121,7 +126,7 @@ void Heightmap::Resize(int w, int h)
 			Vector3& n = normals[Get_index(x, z)];
 			n.x = 0;
 			n.z = 0;
-			n.y = -1;
+			n.y = 1;
 			Texcoord& t = texcoords[Get_index(x, z)];
 			t.u = x/(width-1.0f);
 			t.v = z/(height-1.0f);
@@ -218,6 +223,32 @@ void Heightmap::Render()
 			glDisable(GL_TEXTURE_2D);
 		}
 	}
+/*	
+	glDisable(GL_ALPHA_TEST);
+	glDisable(GL_LIGHTING);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glLineWidth(2);
+	glBegin(GL_LINES);
+	glColor4f(1, 1, 1, 1);
+
+	for(int x = 0; x<width; ++x)
+	{
+		for(int z = 0; z<height; ++z)
+		{
+			Vector3 start = vertices[Get_index(x, z)];
+			Vector3 end = start + normals[Get_index(x, z)];
+			glVertex3f(start.x, start.y, start.z);
+			glVertex3f(end.x, end.y, end.z);
+		}
+	}
+
+	glEnd();
+
+	glDisable(GL_BLEND);
+	glEnable(GL_LIGHTING);
+*/
 }
 
 int Heightmap::Get_index(int x, int z) const

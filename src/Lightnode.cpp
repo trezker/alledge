@@ -14,8 +14,8 @@ Lightnode::Lightnode()
 	
 	for(int i = 0; i<3; ++i)
 	{
-		ambient[i] = 0;
-		diffuse[i] = 0;
+		ambient[i] = 0.2;
+		diffuse[i] = 0.8;
 		specular[i] = 0;
 	}
 	ambient[3] = 1;
@@ -105,10 +105,7 @@ void Lightnode::Prerender()
 		return;
 	}
 	int light = GL_LIGHT0+lights_in_use;
-/*	GLfloat LightAmbient[]= { 0.5f, 0.5f, 0.5f, 1.0f };
-	GLfloat LightDiffuse[]= { 1.0f, 1.0f, 1.0f, 1.0f };
-	GLfloat LightSpecular[]= { 1.0f, 1.0f, 1.0f, 1.0f };
-*/	GLfloat LightPosition[]= { position.x, position.y, position.z, directional?0.0f:1.0f };
+	GLfloat LightPosition[]= { position.x, position.y, position.z, directional?0.0f:1.0f };
 	glLightfv(light, GL_AMBIENT, ambient);
 	glLightfv(light, GL_DIFFUSE, diffuse);
 	glLightfv(light, GL_SPECULAR, specular);
