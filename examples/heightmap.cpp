@@ -16,6 +16,8 @@
 #include <fstream>
 #include <cmath>
 
+#include <GL/glu.h>
+
 Scenenode root;
 shared_ptr<Cameranode> camera;
 shared_ptr<Lightnode> light;
@@ -25,7 +27,32 @@ shared_ptr<Linenode> line;
 shared_ptr<Bitmap> texture;
 shared_ptr<Bitmap> texture2;
 shared_ptr<Bitmap> splat_texture;
+/*
+Vector3 GetOGLPos(int x, int y, shared_ptr<Cameranode> camera)
+{
+	camera->Prerender();
 
+	GLint viewport[4];
+	GLdouble modelview[16];
+	GLdouble projection[16];
+	GLfloat winX, winY, winZ;
+	GLdouble posX, posY, posZ;
+
+	glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
+	glGetDoublev( GL_PROJECTION_MATRIX, projection );
+	glGetIntegerv( GL_VIEWPORT, viewport );
+
+	winX = (float)x;
+	winY = (float)viewport[3] - (float)y;
+	glReadPixels( x, int(winY), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ );
+
+	gluUnProject( winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
+
+	camera->Postrender();
+
+	return Vector3(posX, posY, posZ);
+}
+*/
 bool Init()
 {
 	int MaxTextureImageUnits;
@@ -55,7 +82,7 @@ bool Init()
 	}
 
 	camera = new Cameranode();
-	camera->Set_position(Vector3(0, 0, 30));
+	camera->Set_position(Vector3(0, 5, 30));
 	camera->Set_rotation(Vector3(0, 0, 0));
 	root.Attach_node(camera);
 
@@ -76,7 +103,7 @@ bool Init()
 
 	heightmap = new Heightmap;
 	heightmap->Set_tilesize(1);
-	heightmap->Resize(10, 5);
+	heightmap->Resize(50, 25);
 	heightmap->Set_texture(texture, 0);
 	heightmap->Set_texture(texture2, 1);
 	heightmap->Set_splat_texture(splat_texture);
@@ -93,14 +120,25 @@ bool move_down = false;
 
 float alpha = 1;
 
+float fov = 45.f;
+float near = 1.f;
+float far = 1000.f;
+float width = 640;
+float height = 480;
+
+bool lmb = false;
+bool rmb = false;
+int mouse_x = 0;
+int mouse_y = 0;
+
 void Update(float dt)
 {
-	Vector3 rot = transform->Get_rotation();
+/*	Vector3 rot = transform->Get_rotation();
 	rot.y += 30*dt;
 	rot.x += 60*dt;
 	rot.z += 10*dt;
 	transform->Set_rotation(rot);
-
+*/
 	if(move_forward)
 	{
 		camera->Set_position(camera->Get_position() + camera->Get_front() * dt*10);
@@ -125,15 +163,21 @@ void Update(float dt)
 	{
 		camera->Set_position(camera->Get_position() - camera->Get_up() * dt*10);
 	}
+
+	if(rmb)
+	{
+		Init_perspective_view(fov, width/height, near, far);
+		Vector3 oglpoint = Unproject(mouse_x, mouse_y, camera);
+		Pop_view();
+
+//		std::cout<<"oglpoint x, y, z: "<<oglpoint.x<<", "<<oglpoint.y<<", "<<oglpoint.z<<std::endl;
+		float curve[5] = {-1, -.7, 0, .3, 0};
+		heightmap->Apply_brush(oglpoint.x, oglpoint.z, 10, 1*dt, curve, 5);
+	}
 }
 
 void Render()
 {
-	float fov = 45.f;
-	float near = 1.f;
-	float far = 1000.f;
-	float width = 640;
-	float height = 480;
 	Init_perspective_view(fov, width/height, near, far);
 
 	glEnable(GL_DEPTH_TEST);
@@ -147,8 +191,6 @@ void Render()
 
 	Pop_view();
 }
-
-bool lmb = false;
 
 void Event(ALLEGRO_EVENT event)
 {
@@ -208,11 +250,25 @@ void Event(ALLEGRO_EVENT event)
 	}
 	if (ALLEGRO_EVENT_MOUSE_BUTTON_DOWN == event.type)
 	{
-		lmb = true;
+		if(event.mouse.button == 1)
+		{
+			lmb = true;
+		}
+		if(event.mouse.button == 2)
+		{
+			rmb = true;
+		}
 	}
 	if (ALLEGRO_EVENT_MOUSE_BUTTON_UP == event.type)
 	{
-		lmb = false;
+		if(event.mouse.button == 1)
+		{
+			lmb = false;
+		}
+		if(event.mouse.button == 2)
+		{
+			rmb = false;
+		}
 	}
 	if (ALLEGRO_EVENT_MOUSE_AXES == event.type)
 	{
@@ -220,6 +276,8 @@ void Event(ALLEGRO_EVENT event)
 		{
 			camera->Set_rotation(camera->Get_rotation() + Vector3(-event.mouse.dy, -event.mouse.dx, 0));
 		}
+		mouse_x = event.mouse.x;
+		mouse_y = event.mouse.y;
 	}
 }
 

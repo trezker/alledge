@@ -7,6 +7,7 @@
 #include <cassert>
 #include <iostream>
 #include <cstdio>
+#include <cmath>
 
 Heightmap::Heightmap()
 :width(0)
@@ -219,7 +220,132 @@ void Heightmap::Render()
 	}
 }
 
-int Heightmap::Get_index(int x, int z)
+int Heightmap::Get_index(int x, int z) const
 {
 	return x*height + z;
+}
+
+
+void Heightmap::Apply_brush(float x, float z, float brush_size, float brush_pressure, const float *brush, int brush_points)
+{
+	float brush_scale = brush_points/brush_size;
+	Height_points height_points = Get_height_points_in_circle(x, z, brush_size);
+	for(Height_points::iterator hp=height_points.begin(); hp!=height_points.end(); ++hp)
+	{
+		Vector3* height_point = *hp;
+		float dx = height_point->x-x;
+		float dz = height_point->z-z;
+		float r = sqrt(dx*dx + dz*dz)*brush_scale;
+		int low = r;
+		float p = r-low;
+		if(low+1<brush_points)
+		{
+			float h = height_point->y+brush_pressure*((brush[low+1]-brush[low])*p+brush[low]);
+			height_point->y = h;
+//			Set_height(height_point->x, height_point->z, h);
+		}
+	}
+	Recalc_normals();
+}
+
+void Heightmap::Recalc_normals()
+{
+	for(unsigned int ix = 0; ix<width; ++ix)
+	{
+		for(unsigned int iz = 0; iz<height; ++iz)
+		{
+//			if(rows[ix][iz].normal_dirty)
+			{
+				Calc_normals_around(ix, iz);
+			}
+		}
+	}
+}
+
+Vector3 Heightmap::Calc_normals_helper(Vector3 p, int x2, int z2, int x3, int z3)
+{
+	if(x2<0 || z2<0 || x2>=width || z2>=height)
+		return Vector3();
+	if(x3<0 || z3<0 || x3>=width || z3>=height)
+		return Vector3();
+
+	Vector3 v1 = vertices[Get_index(x2, z2)] - p;
+	Vector3 v2 = vertices[Get_index(x3, z3)] - p;
+	return v2.CrossProduct( v1 );
+}
+
+//Calc the normal for given point
+void Heightmap::Calc_normals_around(int x, int z)
+{
+	Vector3 sum;
+	Vector3 p = vertices[Get_index(x, z)];
+	sum += Calc_normals_helper(p, x+1, z, x+1, z+1);
+	sum += Calc_normals_helper(p, x+1, z+1, x, z+1);
+	sum += Calc_normals_helper(p, x, z+1, x-1, z+1);
+	sum += Calc_normals_helper(p, x-1, z+1, x-1, z);
+	sum += Calc_normals_helper(p, x-1, z, x-1, z-1);
+	sum += Calc_normals_helper(p, x-1, z-1, x, z-1);
+	sum += Calc_normals_helper(p, x, z-1, x+1, z-1);
+	sum += Calc_normals_helper(p, x+1, z-1, x+1, z);
+	sum.Normalize();
+	normals[Get_index(x, z)] = sum;
+}
+/*
+void Heightmap::Set_height(float ix, float iz, float height)
+{
+	int x = ix/tilesize+.5;
+	int z = iz/tilesize+.5;
+	if(x<0 || z<0 || x>=width || z>=height)
+		return;
+	vertices[Get_index(x, z)].y = height;
+//	rows[x][y].normal_dirty = true;
+}
+*/
+float Heightmap::Get_height(float ix, float iz)
+{
+	int tx = ix/tilesize;
+	int tz = iz/tilesize;
+	if(tx<0 || tz<0 || tx+1>=width || tz+1>=height)
+		return 0;
+
+	Vector3& x1z1 = vertices[Get_index(tx, tz)];
+	Vector3& x2z1 = vertices[Get_index(tx+1, tz)];
+	Vector3& x1z2 = vertices[Get_index(tx, tz+1)];
+	Vector3& x2z2 = vertices[Get_index(tx+1, tz+1)];
+
+	float xp = (ix-tx)/tilesize;
+	float zp = (iz-tz)/tilesize;
+	float hx1 = (x2z1.y-x1z1.y)*xp+x1z1.y;
+	float hx2 = (x2z2.y-x1z2.y)*xp+x1z2.y;
+	return (hx2-hx1)*zp+hx1;
+}
+
+Height_points Heightmap::Get_height_points_in_circle(float ix, float iy, float iradius) const
+{
+	int radius = iradius/tilesize+1;
+	int cx = ix/tilesize+.5;
+	int cy = iy/tilesize+.5;
+	int sx = (cx-radius)<0?0:cx-radius;
+	int sy = (cy-radius)<0?0:cy-radius;
+	int ex = (cx+radius)>=width?width:cx+radius+1;
+	int ey = (cy+radius)>=height?height:cy+radius+1;
+	float radius_squared = iradius*iradius;
+
+	Height_points height_points;
+	for(int x = sx; x<ex; ++x)
+	{
+		for(int y = sy; y<ey; ++y)
+		{
+			float rx = x*tilesize;
+			float ry = y*tilesize;
+			float dx = rx-ix;
+			float dy = ry-iy;
+			if(dx*dx + dy*dy <= radius_squared)
+			{
+				Vector3* height_point = &vertices[Get_index(x, y)];
+				height_points.push_back(height_point);
+			}
+		}
+	}
+	return height_points;
 }

@@ -18,6 +18,8 @@ struct Texcoord
 	float v;
 };
 
+typedef std::vector<Vector3*> Height_points;
+
 class Heightmap: public Scenenode
 {
 public:
@@ -28,10 +30,19 @@ public:
 	void Load(const std::string& filename);
 	void Set_tilesize(float s);
 	void Resize(int width, int height);
+	
+//	void Set_height(float x, float y, float height);
+	float Get_height(float x, float z);
+	void Apply_brush(float x, float z, float brush_size, float brush_pressure, const float *brush, int brush_points);
+	Height_points Get_height_points_in_circle(float x, float y, float radius) const;
+
+	void Recalc_normals();
 
 	void Render();
 private:
-	int Get_index(int x, int z);
+	int Get_index(int x, int z) const;
+	Vector3 Calc_normals_helper(Vector3 p, int x2, int y2, int x3, int y3);
+	void Calc_normals_around(int x, int y);
 
 	int width;
 	int height;
