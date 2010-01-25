@@ -88,7 +88,7 @@ bool Init()
 
 	light = new Lightnode;
 	light->Set_position(Vector3(0, 10, 0), false);
-//	light->Set_position(Vector3(1, 1, 0), true);
+	light->Set_position(Vector3(10, 10, 0), true);
 /*	light->Set_ambient(2, 2, 2, 1);
 	light->Set_diffuse(1, 1, 1, 1);
 	light->Set_specular(1, 1, 1, 1);
