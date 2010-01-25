@@ -87,12 +87,12 @@ bool Init()
 	root.Attach_node(camera);
 
 	light = new Lightnode;
-	light->Set_position(Vector3(0, 10, 0), false);
-	light->Set_position(Vector3(10, 10, 0), true);
-/*	light->Set_ambient(2, 2, 2, 1);
-	light->Set_diffuse(1, 1, 1, 1);
-	light->Set_specular(1, 1, 1, 1);
-*/	camera->Attach_node(light);
+//	light->Set_position(Vector3(0, 10, 0), false);
+	light->Set_position(Vector3(1, 1, 0), true);
+	light->Set_ambient(0.2, 0.2, 0.2, 1);
+	light->Set_diffuse(0.8, 0.8, 0.8, 1);
+	light->Set_specular(0.0, 0.0, 0.0, 1);
+	camera->Attach_node(light);
 
 	transform = new Transformnode;
 	light->Attach_node(transform);

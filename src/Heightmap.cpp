@@ -188,6 +188,12 @@ void Heightmap::Render()
 
 	shader_program->Use();
 
+	GLfloat ambient[]= { 0.5f, 0.5f, 0.5f, 0.5f };
+	GLfloat diffuse[]= { 1.0f, 1.0f, 1.0f, 1.0f };
+	glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
+	glColor4f (1.0f, 1.0f, 1.0f, 1.0f);
+
 	glShadeModel(GL_SMOOTH);
 	glEnableClientState (GL_VERTEX_ARRAY);
 	glEnableClientState (GL_NORMAL_ARRAY);
