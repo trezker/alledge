@@ -159,19 +159,15 @@ void Heightmap::Resize(int w, int h)
 
 void Heightmap::Render()
 {
+
 	if(width==0)
 		return;
 
-	glColor4f(1, 1, 1, 1);
-	
 	if(splat_texture.get())
 	{
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, splat_texture->get_opengl_texture());
 		glEnable(GL_TEXTURE_2D);
-
-		glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-		glTexEnvf (GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_REPLACE);
 	}
 	for(int i = 0; i<4; ++i)
 	{
@@ -180,13 +176,12 @@ void Heightmap::Render()
 			glActiveTexture(GL_TEXTURE1+i);
 			glBindTexture(GL_TEXTURE_2D, texture[i]->get_opengl_texture());
 			glEnable(GL_TEXTURE_2D);
-
-			glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT);
-			glTexEnvf (GL_TEXTURE_ENV, GL_COMBINE_RGB_EXT, GL_ADD);
 		}
 	}
 
 	shader_program->Use();
+
+	glDisableClientState(GL_COLOR_ARRAY);
 
 	GLfloat ambient[]= { 0.5f, 0.5f, 0.5f, 0.5f };
 	GLfloat diffuse[]= { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -200,7 +195,6 @@ void Heightmap::Render()
 	glVertexPointer (3, GL_FLOAT, 0, vertices);
 	glNormalPointer(GL_FLOAT, 0, normals);
 
-	glClientActiveTexture(GL_TEXTURE0);
 	glEnableClientState (GL_TEXTURE_COORD_ARRAY);
 	glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
 	
@@ -208,19 +202,11 @@ void Heightmap::Render()
 
 	glDisableClientState (GL_NORMAL_ARRAY);
 	glDisableClientState (GL_VERTEX_ARRAY);
-	glClientActiveTexture(GL_TEXTURE0);
 	glDisableClientState (GL_TEXTURE_COORD_ARRAY);
 	glShadeModel(GL_FLAT);
 
 	glUseProgram(0);
 	
-
-	if(splat_texture.get())
-	{
-		glActiveTexture(GL_TEXTURE0);
-		glDisable(GL_TEXTURE_2D);
-	}
-
 	for(int i = 0; i<4; ++i)
 	{
 		if(texture[i].get())
@@ -229,7 +215,14 @@ void Heightmap::Render()
 			glDisable(GL_TEXTURE_2D);
 		}
 	}
-/*	
+
+	if(splat_texture.get())
+	{
+		glActiveTexture(GL_TEXTURE0);
+		glDisable(GL_TEXTURE_2D);
+	}
+
+/*
 	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_LIGHTING);
 	glEnable(GL_BLEND);

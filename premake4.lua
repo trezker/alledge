@@ -20,6 +20,14 @@ solution (lib_name)
 		targetdir "build/lib"
 		includedirs { "../include" }
 
+		configuration "Debug"
+			defines { "DEBUG" }
+			flags { "Symbols" }
+ 
+		configuration "Release"
+			defines { "NDEBUG" }
+			flags { "Optimize" }
+
 	tests = os.matchfiles("tests/*.cpp")
 	for index, name in pairs(tests) do
 		sname = "test_"..name:sub(7, name:len()-4);
@@ -51,6 +59,14 @@ solution (lib_name)
 			links (ex_dependencies)
 			targetdir "build/examples"
 --			postbuildcommands { "cd .. && build/examples/"..sname }
+
+			configuration "Debug"
+				defines { "DEBUG" }
+				flags { "Symbols" }
+	 
+			configuration "Release"
+				defines { "NDEBUG" }
+				flags { "Optimize" }
 	end
 
 newoption {

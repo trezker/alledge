@@ -3,6 +3,7 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_opengl.h>
+#include <allegro5/allegro_primitives.h>
 #include <iostream>
 
 #include "../alledge/View.h"
@@ -192,6 +193,7 @@ void Render()
 	glDisable(GL_DEPTH_TEST);
 
 	Pop_view();
+	
 }
 
 void Event(ALLEGRO_EVENT event)
