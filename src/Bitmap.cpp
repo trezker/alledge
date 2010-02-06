@@ -24,6 +24,18 @@ void Bitmap::Draw(float x, float y, int flags) const
 	al_draw_bitmap(allegro_bitmap, x, y, flags);
 }
 
+void Bitmap::Draw_scaled(float x, float y, float w, float h, int flags) const
+{
+	int width = al_get_bitmap_width(allegro_bitmap);
+	int height = al_get_bitmap_height(allegro_bitmap);
+	al_draw_scaled_bitmap(allegro_bitmap, 0, 0, width, height, x, y, w, h, flags);
+}
+
+void Bitmap::Set_target()
+{
+	al_set_target_bitmap(allegro_bitmap);
+}
+
 int Bitmap::get_opengl_texture() const
 {
 	return al_get_opengl_texture(allegro_bitmap);

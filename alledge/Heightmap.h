@@ -28,8 +28,12 @@ public:
 	void Set_splat_texture(shared_ptr<Bitmap> t);
 	void Set_texture(shared_ptr<Bitmap> t, int channel);
 	void Load(const std::string& filename);
+	void Set_texture_scale(float s);
 	void Set_tilesize(float s);
 	void Resize(int width, int height);
+	int Get_size_x();
+	int Get_size_z();
+	int Get_tilesize();
 	
 //	void Set_height(float x, float y, float height);
 	float Get_height(float x, float z);
@@ -48,6 +52,7 @@ private:
 	int height;
 	float tilesize;
 	int num_tris;
+	float texture_scale;
 
 	shared_ptr<Bitmap> splat_texture;
 	shared_ptr<Bitmap> texture[4];

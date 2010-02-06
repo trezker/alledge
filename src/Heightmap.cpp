@@ -14,6 +14,7 @@ Heightmap::Heightmap()
 ,height(0)
 ,tilesize(0)
 ,num_tris(0)
+,texture_scale(1)
 ,vertices(NULL)
 ,normals(NULL)
 ,vertexIndices(NULL)
@@ -41,6 +42,10 @@ Heightmap::Heightmap()
 	glUniform1i(location, 3);
 	location = shader_program->Get_uniform_location("tex4"); 
 	glUniform1i(location, 4);
+	location = shader_program->Get_uniform_location("tex_scale_s");
+	glUniform1f(location, 1);
+	location = shader_program->Get_uniform_location("tex_scale_t");
+	glUniform1f(location, 1);
 }
 
 Heightmap::~Heightmap()
@@ -81,6 +86,17 @@ void Heightmap::Load(const std::string& filename)
 {
 }
 
+void Heightmap::Set_texture_scale(float s)
+{
+	if(s<=0)
+		return;
+	texture_scale = s;
+	GLint location = shader_program->Get_uniform_location("tex_scale_s");
+	glUniform1f(location, width*texture_scale);
+	location = shader_program->Get_uniform_location("tex_scale_t");
+	glUniform1f(location, height*texture_scale);
+}
+
 void Heightmap::Set_tilesize(float s)
 {
 	tilesize = s;
@@ -114,6 +130,12 @@ void Heightmap::Resize(int w, int h)
 	vertices = new Vector3[width*height];
 	normals = new Vector3[width*height];
 	texcoords = new Texcoord[width*height];
+
+	GLint location = shader_program->Get_uniform_location("tex_scale_s");
+	glUniform1f(location, width*texture_scale);
+	location = shader_program->Get_uniform_location("tex_scale_t");
+	glUniform1f(location, height*texture_scale);
+
 
 	for(int x = 0; x < width; ++x)
 	{
@@ -157,6 +179,21 @@ void Heightmap::Resize(int w, int h)
 	}
 }
 
+int Heightmap::Get_size_x()
+{
+	return width;
+}
+
+int Heightmap::Get_size_z()
+{
+	return height;
+}
+
+int Heightmap::Get_tilesize()
+{
+	return tilesize;
+}
+
 void Heightmap::Render()
 {
 
@@ -178,6 +215,8 @@ void Heightmap::Render()
 			glEnable(GL_TEXTURE_2D);
 		}
 	}
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 	shader_program->Use();
 
