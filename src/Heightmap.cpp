@@ -54,6 +54,7 @@ Heightmap::~Heightmap()
 	{
 		delete [] vertices;
 		delete [] normals;
+		delete [] colors;
 		delete [] vertexIndices;
 		delete [] texcoords;
 	}
@@ -122,6 +123,7 @@ void Heightmap::Resize(int w, int h)
 	{
 		delete [] vertices;
 		delete [] normals;
+		delete [] colors;
 		delete [] vertexIndices;
 		delete [] texcoords;
 	}
@@ -129,6 +131,7 @@ void Heightmap::Resize(int w, int h)
 	height = h;
 	vertices = new Vector3[width*height];
 	normals = new Vector3[width*height];
+	colors = new Vector3[width*height];
 	texcoords = new Texcoord[width*height];
 
 	GLint location = shader_program->Get_uniform_location("tex_scale_s");
@@ -141,15 +144,20 @@ void Heightmap::Resize(int w, int h)
 	{
 		for(int z = 0; z < height; ++z)
 		{
-			Vector3& v = vertices[Get_index(x, z)];
+			int i = Get_index(x, z);
+			Vector3& v = vertices[i];
 			v.x = x * tilesize;
 			v.z = z * tilesize;
 			v.y = 0;
-			Vector3& n = normals[Get_index(x, z)];
+			Vector3& n = normals[i];
 			n.x = 0;
 			n.z = 0;
 			n.y = 1;
-			Texcoord& t = texcoords[Get_index(x, z)];
+			Vector3& c = colors[i];
+			c.x = 0.5;
+			c.z = 0.5;
+			c.y = 0.5;
+			Texcoord& t = texcoords[i];
 			t.u = x/(width-1.0f);
 			t.v = z/(height-1.0f);
 		}
@@ -213,14 +221,12 @@ void Heightmap::Render()
 			glActiveTexture(GL_TEXTURE1+i);
 			glBindTexture(GL_TEXTURE_2D, texture[i]->get_opengl_texture());
 			glEnable(GL_TEXTURE_2D);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		}
 	}
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 	shader_program->Use();
-
-	glDisableClientState(GL_COLOR_ARRAY);
 
 	GLfloat ambient[]= { 0.5f, 0.5f, 0.5f, 0.5f };
 	GLfloat diffuse[]= { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -231,8 +237,10 @@ void Heightmap::Render()
 	glShadeModel(GL_SMOOTH);
 	glEnableClientState (GL_VERTEX_ARRAY);
 	glEnableClientState (GL_NORMAL_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
 	glVertexPointer (3, GL_FLOAT, 0, vertices);
 	glNormalPointer(GL_FLOAT, 0, normals);
+	glColorPointer (3, GL_FLOAT, 0, colors);
 
 	glEnableClientState (GL_TEXTURE_COORD_ARRAY);
 	glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
@@ -294,6 +302,21 @@ int Heightmap::Get_index(int x, int z) const
 	return x*height + z;
 }
 
+void Heightmap::Color_filled_circle(float x, float z, float radius, ALLEGRO_COLOR color)
+{
+	float r;
+	float g;
+	float b;
+	al_unmap_rgb_f(color, &r, &g, &b);
+
+	std::list<int> indices = Get_indices_in_circle(x, z, radius);
+	for(std::list<int>::iterator i = indices.begin(); i != indices.end(); ++i)
+	{
+		colors[*i].x = r;
+		colors[*i].y = r;
+		colors[*i].z = r;
+	}
+}
 
 void Heightmap::Apply_brush(float x, float z, float brush_size, float brush_pressure, const float *brush, int brush_points)
 {
@@ -417,4 +440,34 @@ Height_points Heightmap::Get_height_points_in_circle(float ix, float iy, float i
 		}
 	}
 	return height_points;
+}
+
+
+std::list<int> Heightmap::Get_indices_in_circle(float ix, float iy, float iradius) const
+{
+	int radius = iradius/tilesize+1;
+	int cx = ix/tilesize+.5;
+	int cy = iy/tilesize+.5;
+	int sx = (cx-radius)<0?0:cx-radius;
+	int sy = (cy-radius)<0?0:cy-radius;
+	int ex = (cx+radius)>=width?width:cx+radius+1;
+	int ey = (cy+radius)>=height?height:cy+radius+1;
+	float radius_squared = iradius*iradius;
+
+	std::list<int> indices;
+	for(int x = sx; x<ex; ++x)
+	{
+		for(int y = sy; y<ey; ++y)
+		{
+			float rx = x*tilesize;
+			float ry = y*tilesize;
+			float dx = rx-ix;
+			float dy = ry-iy;
+			if(dx*dx + dy*dy <= radius_squared)
+			{
+				indices.push_back(Get_index(x, y));
+			}
+		}
+	}
+	return indices;
 }

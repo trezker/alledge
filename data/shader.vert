@@ -15,7 +15,9 @@ void main()
 
 	/* Normalize the halfVector to pass it to the fragment shader */
 	halfVector = normalize(gl_LightSource[0].halfVector.xyz);
-				
+
+	gl_FrontColor = gl_Color;
+
 	/* Compute the diffuse, ambient and globalAmbient terms */
 	diffuse = gl_FrontMaterial.diffuse * gl_LightSource[0].diffuse;
 	ambient = gl_FrontMaterial.ambient * gl_LightSource[0].ambient;

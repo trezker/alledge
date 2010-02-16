@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <list>
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_opengl.h>
 #include "Vector3.h"
@@ -35,10 +36,12 @@ public:
 	int Get_size_z();
 	int Get_tilesize();
 	
+	void Color_filled_circle(float x, float z, float radius, ALLEGRO_COLOR color);
 //	void Set_height(float x, float y, float height);
 	float Get_height(float x, float z);
 	void Apply_brush(float x, float z, float brush_size, float brush_pressure, const float *brush, int brush_points);
 	Height_points Get_height_points_in_circle(float x, float y, float radius) const;
+	std::list<int> Get_indices_in_circle(float ix, float iy, float iradius) const;
 
 	void Recalc_normals();
 
@@ -58,6 +61,7 @@ private:
 	shared_ptr<Bitmap> texture[4];
 	Vector3* vertices;
 	Vector3* normals;
+	Vector3* colors;
 	int* vertexIndices;
 	Texcoord* texcoords;
 	

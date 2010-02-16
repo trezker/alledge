@@ -19,6 +19,16 @@ bool Bitmap::Load(const std::string& filename)
 	return allegro_bitmap!=NULL;
 }
 
+int Bitmap::Get_width() const
+{
+	return al_get_bitmap_width(allegro_bitmap);
+}
+
+int Bitmap::Get_height() const
+{
+	return al_get_bitmap_height(allegro_bitmap);
+}
+
 void Bitmap::Draw(float x, float y, int flags) const
 {
 	al_draw_bitmap(allegro_bitmap, x, y, flags);

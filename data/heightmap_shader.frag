@@ -15,7 +15,7 @@ void main()
 {
 	vec3 texAlpha    = texture2D( alpha, gl_TexCoord[0].st ).rgb;
 
-	vec3 tx = vec3(0.5,0.5,0.5);
+	vec3 tx = gl_Color;
 	
 	if(use_tex1)
 	{
