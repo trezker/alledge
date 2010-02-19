@@ -313,8 +313,8 @@ void Heightmap::Color_filled_circle(float x, float z, float radius, ALLEGRO_COLO
 	for(std::list<int>::iterator i = indices.begin(); i != indices.end(); ++i)
 	{
 		colors[*i].x = r;
-		colors[*i].y = r;
-		colors[*i].z = r;
+		colors[*i].y = g;
+		colors[*i].z = b;
 	}
 }
 
