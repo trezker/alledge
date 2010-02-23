@@ -26,6 +26,7 @@ class Heightmap: public Scenenode
 public:
 	Heightmap();
 	~Heightmap();
+	void Set_ground_texture(shared_ptr<Bitmap> t);
 	void Set_splat_texture(shared_ptr<Bitmap> t);
 	void Set_texture(shared_ptr<Bitmap> t, int channel);
 	void Load(const std::string& filename);
@@ -57,6 +58,7 @@ private:
 	int num_tris;
 	float texture_scale;
 
+	shared_ptr<Bitmap> ground_texture;
 	shared_ptr<Bitmap> splat_texture;
 	shared_ptr<Bitmap> texture[4];
 	Vector3* vertices;

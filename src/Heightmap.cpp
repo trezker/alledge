@@ -32,16 +32,18 @@ Heightmap::Heightmap()
 	shader_program->Attach_shader(fragment_shader);
 	shader_program->Link();
 	shader_program->Use();
-	GLint location = shader_program->Get_uniform_location("alpha"); 
+	GLint location = shader_program->Get_uniform_location("ground"); 
 	glUniform1i(location, 0);
-	location = shader_program->Get_uniform_location("tex1"); 
+	location = shader_program->Get_uniform_location("alpha"); 
 	glUniform1i(location, 1);
-	location = shader_program->Get_uniform_location("tex2"); 
+	location = shader_program->Get_uniform_location("tex1"); 
 	glUniform1i(location, 2);
-	location = shader_program->Get_uniform_location("tex3"); 
+	location = shader_program->Get_uniform_location("tex2"); 
 	glUniform1i(location, 3);
-	location = shader_program->Get_uniform_location("tex4"); 
+	location = shader_program->Get_uniform_location("tex3"); 
 	glUniform1i(location, 4);
+	location = shader_program->Get_uniform_location("tex4"); 
+	glUniform1i(location, 5);
 	location = shader_program->Get_uniform_location("tex_scale_s");
 	glUniform1f(location, 1);
 	location = shader_program->Get_uniform_location("tex_scale_t");
@@ -59,6 +61,19 @@ Heightmap::~Heightmap()
 		delete [] texcoords;
 	}
 	delete shader_program;
+}
+
+void Heightmap::Set_ground_texture(shared_ptr<Bitmap> t)
+{
+	ground_texture = t;
+
+	shader_program->Use();
+	GLint location = shader_program->Get_uniform_location("ground_tex"); 
+	if(t.get())
+		glUniform1i(location, 1);
+	else
+		glUniform1i(location, 0);
+	glUseProgram(0);
 }
 
 void Heightmap::Set_splat_texture(shared_ptr<Bitmap> t)
@@ -208,9 +223,16 @@ void Heightmap::Render()
 	if(width==0)
 		return;
 
-	if(splat_texture.get())
+	if(ground_texture.get())
 	{
 		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, ground_texture->get_opengl_texture());
+		glEnable(GL_TEXTURE_2D);
+	}
+
+	if(splat_texture.get())
+	{
+		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, splat_texture->get_opengl_texture());
 		glEnable(GL_TEXTURE_2D);
 	}
@@ -218,7 +240,7 @@ void Heightmap::Render()
 	{
 		if(texture[i].get())
 		{
-			glActiveTexture(GL_TEXTURE1+i);
+			glActiveTexture(GL_TEXTURE2+i);
 			glBindTexture(GL_TEXTURE_2D, texture[i]->get_opengl_texture());
 			glEnable(GL_TEXTURE_2D);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -258,12 +280,18 @@ void Heightmap::Render()
 	{
 		if(texture[i].get())
 		{
-			glActiveTexture(GL_TEXTURE1+i);
+			glActiveTexture(GL_TEXTURE2+i);
 			glDisable(GL_TEXTURE_2D);
 		}
 	}
 
 	if(splat_texture.get())
+	{
+		glActiveTexture(GL_TEXTURE1);
+		glDisable(GL_TEXTURE_2D);
+	}
+
+	if(ground_texture.get())
 	{
 		glActiveTexture(GL_TEXTURE0);
 		glDisable(GL_TEXTURE_2D);
