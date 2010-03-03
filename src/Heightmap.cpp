@@ -8,6 +8,7 @@
 #include <iostream>
 #include <cstdio>
 #include <cmath>
+#include <fstream>
 
 Heightmap::Heightmap()
 :width(0)
@@ -98,8 +99,70 @@ void Heightmap::Set_texture(shared_ptr<Bitmap> t, int channel)
 	glUseProgram(0);
 }
 
+shared_ptr<Bitmap> Heightmap::Get_ground_texture()
+{
+	return ground_texture;
+}
+
+shared_ptr<Bitmap> Heightmap::Get_texture(int channel)
+{
+	return texture[channel];
+}
+
+void Heightmap::Set_ground_texture_filename(std::string t)
+{
+	ground_texture_filename = t;
+}
+
+void Heightmap::Set_texture_filename(std::string t, int channel)
+{
+	if(channel<0 || channel>3)
+		return; //Invalid channel
+	texture_filename[channel] = t;
+}
+
+void Heightmap::Save(const std::string& filename)
+{
+	std::ofstream fs;
+	fs.open(filename.c_str());
+	
+	fs<<ground_texture_filename<<std::endl;
+	for(int i = 0; i<4; ++i)
+		fs<<texture_filename[i]<<std::endl;
+	
+	fs.close();
+}
+
 void Heightmap::Load(const std::string& filename)
 {
+	char buf[256];
+
+	std::ifstream fs;
+	fs.open(filename.c_str());
+
+	fs.getline(buf, 256);
+	ground_texture_filename = buf;
+	ground_texture = new Bitmap;
+	ground_texture->Load(buf);
+
+	for(int i = 0; i<4; ++i)
+	{
+		fs.getline(buf, 256);
+		texture_filename[i] = buf;
+		shared_ptr<Bitmap> bmp = new Bitmap;
+		if(!bmp->Load(buf))
+		{
+			bmp.reset();
+		}
+		Set_texture(bmp, i);
+//		std::cout<<"Texture "<<texture[i].get()<<std::endl;
+	}
+/*	
+	fs<<ground_texture_filename<<std::endl;
+	for(int i = 0; i<4; ++i)
+		fs<<texture_filename[i]<<std::endl;
+*/
+	fs.close();
 }
 
 void Heightmap::Set_texture_scale(float s)

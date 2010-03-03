@@ -11,6 +11,7 @@ public:
 	Bitmap();
 	~Bitmap();
 	bool Load(const std::string& filename);
+	bool Save(const std::string& filename);
 	int Get_width() const;
 	int Get_height() const;
 	void Draw(float x, float y, int flags) const;

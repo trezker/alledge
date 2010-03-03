@@ -15,8 +15,17 @@ Bitmap::~Bitmap()
 
 bool Bitmap::Load(const std::string& filename)
 {
+	if(allegro_bitmap != NULL)
+	{
+		al_destroy_bitmap(allegro_bitmap);
+	}
 	allegro_bitmap = al_load_bitmap(filename.c_str());
 	return allegro_bitmap!=NULL;
+}
+
+bool Bitmap::Save(const std::string& filename)
+{
+	return al_save_bitmap(filename.c_str(), allegro_bitmap);
 }
 
 int Bitmap::Get_width() const

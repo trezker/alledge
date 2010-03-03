@@ -29,7 +29,15 @@ public:
 	void Set_ground_texture(shared_ptr<Bitmap> t);
 	void Set_splat_texture(shared_ptr<Bitmap> t);
 	void Set_texture(shared_ptr<Bitmap> t, int channel);
+	shared_ptr<Bitmap> Get_ground_texture();
+	shared_ptr<Bitmap> Get_texture(int channel);
+
+	void Set_ground_texture_filename(std::string t);
+	void Set_texture_filename(std::string t, int channel);
+
+	void Save(const std::string& filename);
 	void Load(const std::string& filename);
+
 	void Set_texture_scale(float s);
 	void Set_tilesize(float s);
 	void Resize(int width, int height);
@@ -68,6 +76,9 @@ private:
 	Texcoord* texcoords;
 	
 	Shader_program* shader_program;
+
+	std::string ground_texture_filename;
+	std::string texture_filename[4];
 };
 
 #endif
