@@ -130,6 +130,22 @@ void Heightmap::Save(const std::string& filename)
 	for(int i = 0; i<4; ++i)
 		fs<<texture_filename[i]<<std::endl;
 	
+	std::string splat_filename = filename + "splat.png";
+	splat_texture->Save(splat_filename);
+
+	fs<<width<<" "<<height<<std::endl;
+
+	for(int x = 0; x < width; ++x)
+	{
+		for(int z = 0; z < height; ++z)
+		{
+			int i = Get_index(x, z);
+			Vector3& v = vertices[i];
+			Vector3& c = colors[i];
+			fs<<v.x<<" "<<v.y<<" "<<v.z<<" "<<c.x<<" "<<c.y<<" "<<c.z<<std::endl;
+		}
+	}
+	
 	fs.close();
 }
 
@@ -155,14 +171,34 @@ void Heightmap::Load(const std::string& filename)
 			bmp.reset();
 		}
 		Set_texture(bmp, i);
-//		std::cout<<"Texture "<<texture[i].get()<<std::endl;
 	}
-/*	
-	fs<<ground_texture_filename<<std::endl;
-	for(int i = 0; i<4; ++i)
-		fs<<texture_filename[i]<<std::endl;
-*/
+
+	std::string splat_filename = filename + "splat.png";
+	splat_texture->Load(splat_filename);
+	
+	
+	fs>>width;
+	fs>>height;
+	Resize(width, height);
+	for(int x = 0; x < width; ++x)
+	{
+		for(int z = 0; z < height; ++z)
+		{
+			int i = Get_index(x, z);
+			Vector3& v = vertices[i];
+			Vector3& c = colors[i];
+			fs>>v.x;
+			fs>>v.y;
+			fs>>v.z;
+			fs>>c.x;
+			fs>>c.y;
+			fs>>c.z;
+		}
+	}
+
 	fs.close();
+	
+	Recalc_normals();
 }
 
 void Heightmap::Set_texture_scale(float s)
