@@ -13,6 +13,16 @@ Bitmap::~Bitmap()
 	al_destroy_bitmap(allegro_bitmap);
 }
 
+bool Bitmap::Create(int w, int h)
+{
+	if(allegro_bitmap != NULL)
+	{
+		al_destroy_bitmap(allegro_bitmap);
+	}
+	allegro_bitmap = al_create_bitmap(w, h);
+	return allegro_bitmap!=NULL;
+}
+
 bool Bitmap::Load(const std::string& filename)
 {
 	if(allegro_bitmap != NULL)

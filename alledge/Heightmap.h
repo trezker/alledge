@@ -31,6 +31,7 @@ public:
 	void Set_texture(shared_ptr<Bitmap> t, int channel);
 	shared_ptr<Bitmap> Get_ground_texture();
 	shared_ptr<Bitmap> Get_texture(int channel);
+	shared_ptr<Bitmap> Get_splat_texture();
 
 	void Set_ground_texture_filename(std::string t);
 	void Set_texture_filename(std::string t, int channel);

@@ -49,6 +49,9 @@ Heightmap::Heightmap()
 	glUniform1f(location, 1);
 	location = shader_program->Get_uniform_location("tex_scale_t");
 	glUniform1f(location, 1);
+	
+	splat_texture = new Bitmap;
+	assert(splat_texture->Create(512, 512));
 }
 
 Heightmap::~Heightmap()
@@ -80,6 +83,11 @@ void Heightmap::Set_ground_texture(shared_ptr<Bitmap> t)
 void Heightmap::Set_splat_texture(shared_ptr<Bitmap> t)
 {
 	splat_texture = t;
+}
+
+shared_ptr<Bitmap> Heightmap::Get_splat_texture()
+{
+	return splat_texture;
 }
 
 void Heightmap::Set_texture(shared_ptr<Bitmap> t, int channel)

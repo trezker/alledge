@@ -10,6 +10,7 @@ class Bitmap
 public:
 	Bitmap();
 	~Bitmap();
+	bool Create(int w, int h);
 	bool Load(const std::string& filename);
 	bool Save(const std::string& filename);
 	int Get_width() const;
