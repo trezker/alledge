@@ -24,17 +24,14 @@ shared_ptr<Static_model_node> model_node;
 bool Init()
 {
 	camera = new Cameranode();
-	camera->Set_position(Vector3(0, 8, 50));
+	camera->Set_position(Vector3(0, 0, 10));
 	camera->Set_rotation(Vector3(0, 0, 0));
 	root.Attach_node(camera);
 
 	light = new Lightnode;
-	light->Set_ambient(1, 1, 1, 1);
-	light->Set_diffuse(1, 1, 1, 1);
-	light->Set_specular(1, 1, 1, 1);
 	light->Set_position(Vector3(1, 1, 1), true);
 	camera->Attach_node(light);
-	
+
 	transform = new Transformnode;
 	light->Attach_node(transform);
 
@@ -44,6 +41,9 @@ bool Init()
 	if(texture->Load("data/handgun.png"))
 		model->Set_texture(texture);
 
+
+	float color[4] = {1, 0, 1, 1};
+//	model->Set_color(color);
 	model_node = new Static_model_node;
 	model_node->Set_model(model);
 	transform->Attach_node(model_node);

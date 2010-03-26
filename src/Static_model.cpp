@@ -4,10 +4,22 @@
 
 Static_model::Static_model()
 {
+	for(int i=0; i<4; ++i)
+	{
+		color[i] = 0.5;
+	}
 }
 
 Static_model::~Static_model()
 {
+}
+
+void Static_model::Set_color(float c[4])
+{
+	for(int i=0; i<4; ++i)
+	{
+		color[i] = c[i];
+	}
 }
 
 void Static_model::Set_texture(shared_ptr<Bitmap> t)
@@ -82,11 +94,17 @@ void Static_model::Render()
 	{
 		glBindTexture(GL_TEXTURE_2D, texture->get_opengl_texture());
 		glEnable(GL_TEXTURE_2D);
-		glShadeModel(GL_SMOOTH);
-
-		glAlphaFunc(GL_GREATER,0.1f);
-		glEnable(GL_ALPHA_TEST);
 	}
+	else
+	{
+		glDisable(GL_TEXTURE_2D);
+	}
+
+	glEnable(GL_COLOR_MATERIAL);
+	glColor4fv(color);
+	glShadeModel(GL_SMOOTH);
+	glAlphaFunc(GL_GREATER,0.1f);
+	glEnable(GL_ALPHA_TEST);
 
 	glBegin(GL_TRIANGLES);
 	UV_coords::iterator uv=uv_coords.begin();
@@ -97,12 +115,4 @@ void Static_model::Render()
 		glVertex3f(coords[*i].x, coords[*i].y, coords[*i].z);
 	}
 	glEnd();
-
-	if(texture.get())
-	{
-		glDisable(GL_ALPHA_TEST);
-		glDisable(GL_TEXTURE_2D);
-		glShadeModel(GL_FLAT);
-		glDisable(GL_ALPHA_TEST);
-	}
 }

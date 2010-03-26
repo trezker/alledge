@@ -22,10 +22,12 @@ public:
 	Static_model();
 	~Static_model();
 	void Set_texture(shared_ptr<Bitmap> t);
+	void Set_color(float c[4]);
 	void Load_model(const std::string& filename);
 
 	void Render();
 private:
+	float color[4];
 	shared_ptr<Bitmap> texture;
 	typedef std::vector<Vector3> Vectors;
 	Vectors coords;
