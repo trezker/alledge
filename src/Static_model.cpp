@@ -6,7 +6,7 @@ Static_model::Static_model()
 {
 	for(int i=0; i<4; ++i)
 	{
-		color[i] = 0.5;
+		color[i] = 1;
 	}
 }
 
