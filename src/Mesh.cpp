@@ -190,6 +190,7 @@ void Mesh::Render() const
 	glEnableClientState (GL_VERTEX_ARRAY);
 	glEnableClientState (GL_NORMAL_ARRAY);
 	glEnableClientState (GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
 	
 	glVertexPointer (3, GL_FLOAT, 0, vertexArray);
 	glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
@@ -197,8 +198,4 @@ void Mesh::Render() const
 
 	glDrawElements (GL_TRIANGLES, mesh->num_tris * 3,
 					GL_UNSIGNED_INT, vertexIndices);
-
-	glDisableClientState (GL_TEXTURE_COORD_ARRAY);
-	glDisableClientState (GL_NORMAL_ARRAY);
-	glDisableClientState (GL_VERTEX_ARRAY);
 }

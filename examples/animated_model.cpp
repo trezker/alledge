@@ -54,8 +54,8 @@ bool Init()
 //	model->Load_model("../darw.md5mesh");
 //	model->Load_animation("../darw_walk.md5anim", "walk");
 	model->Load_model("data/Male.md5mesh");
-	model->Load_animation("data/Male_walk.md5anim", "walk");
-	model->Load_animation("data/Male_run.md5anim", "run");
+//	model->Load_animation("data/Male_walk.md5anim", "walk");
+//	model->Load_animation("data/Male_run.md5anim", "run");
 //	skirt_model = new Animated_model;
 //	skirt_model->Load_model("data/Male.md5mesh");
 
