@@ -61,7 +61,7 @@ bool Init()
 
 	model_instance = new Animated_model_instance;
 	model_instance->Set_model(model);
-	model_instance->Play_animation("walk", true);
+//	model_instance->Play_animation("walk", true);
 
 	model_node = new Animated_model_node;
 	model_node->Set_model(model_instance);

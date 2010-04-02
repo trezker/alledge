@@ -93,6 +93,11 @@ void Animated_model_instance::Update(double dt)
 	else
 	{
 		/* No animation, use bind-pose skeleton */
+		for(Meshbuffers::iterator i = meshbuffers.begin(); i != meshbuffers.end(); ++i)
+		{
+			md5_joint_t *bind_pose = model->Get_bind_pose();
+			i->Prepare_frame(bind_pose);
+		}
 	}
 }
 
@@ -127,7 +132,14 @@ bool Animated_model_instance::Animation_has_ended()
 
 void Animated_model_instance::Apply_bone(const std::string& name)
 {
-	model->Apply_bone(name, allocated_skeleton);
+	if(active_animation)
+	{
+		model->Apply_bone(name, allocated_skeleton);
+	}
+	else
+	{
+		model->Apply_bone(name, model->Get_bind_pose());
+	}
 }
 
 bool Animated_model_instance::Has_bone(const std::string& bone)

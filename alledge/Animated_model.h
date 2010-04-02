@@ -25,6 +25,7 @@ public:
 	void Load_animation(const std::string& filename, const std::string& name);
 
 	md5_anim_t* Get_animation(const std::string& name);
+	md5_joint_t *Get_bind_pose();
 	int Get_num_joints();
 	void New_buffers(Meshbuffers& buffers);
 

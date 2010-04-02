@@ -174,3 +174,8 @@ void Animated_model::Set_skeleton(md5_joint_t *s)
 {
 	skeleton = s;
 }
+
+md5_joint_t *Animated_model::Get_bind_pose()
+{
+	return md5file.baseSkel;
+}
