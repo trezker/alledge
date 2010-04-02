@@ -39,10 +39,10 @@ bool Init()
 
 
 	light = new Lightnode;
-	light->Set_ambient(1, 1, 1, 1);
+/*	light->Set_ambient(1, 1, 1, 1);
 	light->Set_diffuse(1, 1, 1, 1);
 	light->Set_specular(1, 1, 1, 1);
-	light->Set_position(Vector3(1, 1, 1), true);
+*/	light->Set_position(Vector3(1, 1, 1), true);
 	camera->Attach_node(light);
 	
 	transform = new Transformnode;

@@ -51,7 +51,7 @@ void Animated_model_instance::Render()
 	GLfloat diffuse[]= { 0.8f, 0.8f, 0.8f, 1.0f };
 	glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
-	glColor4f (1.0f, 1.0f, 1.0f, 0.5f);
+	glColor4f (1.0f, 1.0f, 1.0f, 1.0f);
 
 	for(Meshbuffers::iterator i = meshbuffers.begin(); i != meshbuffers.end(); ++i)
 	{
