@@ -61,17 +61,17 @@ void Static_model::Load_model(const std::string& filename)
 				if(p.x < low_corner.x)
 					low_corner.x = p.x;
 				else if(p.x > high_corner.x)
-					low_corner.x = p.x;
+					high_corner.x = p.x;
 
 				if(p.y < low_corner.y)
 					low_corner.y = p.y;
 				else if(p.y > high_corner.y)
-					low_corner.y = p.y;
+					high_corner.y = p.y;
 
 				if(p.z < low_corner.z)
 					low_corner.z = p.z;
 				else if(p.z > high_corner.z)
-					low_corner.z = p.z;
+					high_corner.z = p.z;
 			}
 		}
 		if(t=='N')
