@@ -131,14 +131,15 @@ void Heightmap::Set_texture_filename(std::string t, int channel)
 
 void Heightmap::Save(const std::string& filename)
 {
+	std::string heightmap_file = filename + "/heightmap";
 	std::ofstream fs;
-	fs.open(filename.c_str());
+	fs.open(heightmap_file.c_str());
 	
 	fs<<ground_texture_filename<<std::endl;
 	for(int i = 0; i<4; ++i)
 		fs<<texture_filename[i]<<std::endl;
 	
-	std::string splat_filename = filename + "splat.png";
+	std::string splat_filename = filename + "/splat.png";
 	splat_texture->Save(splat_filename);
 
 	fs<<width<<" "<<height<<std::endl;
@@ -161,8 +162,9 @@ void Heightmap::Load(const std::string& filename)
 {
 	char buf[256];
 
+	std::string heightmap_file = filename + "/heightmap";
 	std::ifstream fs;
-	fs.open(filename.c_str());
+	fs.open(heightmap_file.c_str());
 
 	fs.getline(buf, 256);
 	ground_texture_filename = buf;
@@ -181,7 +183,7 @@ void Heightmap::Load(const std::string& filename)
 		Set_texture(bmp, i);
 	}
 
-	std::string splat_filename = filename + "splat.png";
+	std::string splat_filename = filename + "/splat.png";
 	splat_texture->Load(splat_filename);
 	
 	

@@ -39,13 +39,39 @@ void Static_model::Load_model(const std::string& filename)
 		{
 			int num_coords;
 			f>>num_coords;
-			for(int i=0; i<num_coords; ++i)
+
+			//First point outside loop to set initial low/high corners
+			Vector3 p;
+			f>>p.x;
+			f>>p.z;
+			f>>p.y;
+			coords.push_back(p);
+
+			low_corner = p;
+			high_corner = p;
+
+			for(int i=1; i<num_coords; ++i)
 			{
 				Vector3 p;
 				f>>p.x;
 				f>>p.z;
 				f>>p.y;
 				coords.push_back(p);
+				
+				if(p.x < low_corner.x)
+					low_corner.x = p.x;
+				else if(p.x > high_corner.x)
+					low_corner.x = p.x;
+
+				if(p.y < low_corner.y)
+					low_corner.y = p.y;
+				else if(p.y > high_corner.y)
+					low_corner.y = p.y;
+
+				if(p.z < low_corner.z)
+					low_corner.z = p.z;
+				else if(p.z > high_corner.z)
+					low_corner.z = p.z;
 			}
 		}
 		if(t=='N')
@@ -69,7 +95,7 @@ void Static_model::Load_model(const std::string& filename)
 			{
 				int index;
 				f>>index;
-				quads.push_back(index);
+				faces.push_back(index);
 			}
 		}
 		if(t=='T')
@@ -108,11 +134,37 @@ void Static_model::Render()
 
 	glBegin(GL_TRIANGLES);
 	UV_coords::iterator uv=uv_coords.begin();
-	for(Indexes::iterator i=quads.begin(); i!=quads.end(); ++i, ++uv)
+	for(Indexes::iterator i=faces.begin(); i!=faces.end(); ++i, ++uv)
 	{
 		glNormal3f(normals[*i].x, normals[*i].y, normals[*i].z);
 		glTexCoord2f(uv->u, uv->v);
 		glVertex3f(coords[*i].x, coords[*i].y, coords[*i].z);
 	}
 	glEnd();
+}
+
+Vector3 Static_model::Get_low_corner()
+{
+	return low_corner;
+}
+
+Vector3 Static_model::Get_high_corner()
+{
+	return high_corner;
+}
+
+void Static_model::Set_model_data(Vectors c, Indexes f)
+{
+	coords.clear();
+	faces.clear();
+	normals.resize(c.size());
+	uv_coords.resize(c.size());
+	for(Vectors::iterator i=c.begin(); i!=c.end(); ++i)
+	{
+		coords.push_back(*i);
+	}
+	for(Indexes::iterator i=f.begin(); i!=f.end(); ++i)
+	{
+		faces.push_back(*i);
+	}
 }
