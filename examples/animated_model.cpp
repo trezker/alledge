@@ -61,6 +61,8 @@ bool Init()
 
 	model_instance = new Animated_model_instance;
 	model_instance->Set_model(model);
+	float c[4] = {1, 0, 0, 1};
+	model_instance->Set_color(c);
 //	model_instance->Play_animation("walk", true);
 
 	model_node = new Animated_model_node;

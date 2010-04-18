@@ -10,6 +10,10 @@ Animated_model_instance::Animated_model_instance()
 	model = NULL;
 	active_animation = NULL;
 	allocated_skeleton = NULL;
+	for(int i=0; i<4; ++i)
+	{
+		color[i] = 1;
+	}
 }
 
 Animated_model_instance::~Animated_model_instance()
@@ -47,11 +51,11 @@ void Animated_model_instance::Render()
 	glPushMatrix();
 	glRotatef (-90.f, 1.0f, .0f, .0f);
 
-	GLfloat ambient[]= { 0.2f, 0.2f, 0.2f, 1.0f };
-	GLfloat diffuse[]= { 0.8f, 0.8f, 0.8f, 1.0f };
-	glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
-	glColor4f (1.0f, 1.0f, 1.0f, 1.0f);
+	glEnable(GL_COLOR_MATERIAL);
+	glColor4fv(color);
+	glShadeModel(GL_SMOOTH);
+	glAlphaFunc(GL_GREATER,0.1f);
+	glEnable(GL_ALPHA_TEST);
 
 	for(Meshbuffers::iterator i = meshbuffers.begin(); i != meshbuffers.end(); ++i)
 	{
@@ -182,4 +186,12 @@ Vector3 Animated_model_instance::Get_low_corner()
 Vector3 Animated_model_instance::Get_high_corner()
 {
 	return high_corner;
+}
+
+void Animated_model_instance::Set_color(float c[4])
+{
+	for(int i=0; i<4; ++i)
+	{
+		color[i] = c[i];
+	}
 }

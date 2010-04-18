@@ -30,8 +30,10 @@ public:
 
 	Vector3 Get_low_corner();
 	Vector3 Get_high_corner();
+	void Set_color(float c[4]);
 
 private:
+	float color[4];
 	bool paused;
 	anim_info_t animInfo;
 	md5_anim_t *active_animation;
