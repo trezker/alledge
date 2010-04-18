@@ -99,6 +99,33 @@ void Animated_model_instance::Update(double dt)
 			i->Prepare_frame(bind_pose);
 		}
 	}
+
+	Meshbuffers::iterator i = meshbuffers.begin();
+	low_corner = i->Get_low_corner();
+	high_corner = i->Get_high_corner();
+	Vector3 lc;
+	Vector3 hc;
+	++i;
+	for(; i != meshbuffers.end(); ++i)
+	{
+		lc = i->Get_low_corner();
+		hc = i->Get_high_corner();
+
+		if(lc.x < low_corner.x)
+			low_corner.x = lc.x;
+		if(hc.x > high_corner.x)
+			high_corner.x = hc.x;
+
+		if(lc.y < low_corner.y)
+			low_corner.y = lc.y;
+		if(hc.y > high_corner.y)
+			high_corner.y = hc.y;
+
+		if(lc.z < low_corner.z)
+			low_corner.z = lc.z;
+		if(hc.z > high_corner.z)
+			high_corner.z = hc.z;
+	}
 }
 
 void Animated_model_instance::Pause_animation(bool b)
@@ -145,4 +172,14 @@ void Animated_model_instance::Apply_bone(const std::string& name)
 bool Animated_model_instance::Has_bone(const std::string& bone)
 {
 	return model->Has_bone(bone);
+}
+
+Vector3 Animated_model_instance::Get_low_corner()
+{
+	return low_corner;
+}
+
+Vector3 Animated_model_instance::Get_high_corner()
+{
+	return high_corner;
 }

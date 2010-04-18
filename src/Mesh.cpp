@@ -182,6 +182,21 @@ void Mesh::Prepare_frame(const struct md5_joint_t *skeleton)
 		vertexArray[i][0] = finalVertex[0];
 		vertexArray[i][1] = finalVertex[1];
 		vertexArray[i][2] = finalVertex[2];
+
+		if(finalVertex[0] < low_corner.x)
+			low_corner.x = finalVertex[0];
+		else if(finalVertex[0] > high_corner.x)
+			high_corner.x = finalVertex[0];
+
+		if(finalVertex[1] < low_corner.y)
+			low_corner.y = finalVertex[1];
+		else if(finalVertex[1] > high_corner.y)
+			high_corner.y = finalVertex[1];
+
+		if(finalVertex[2] < low_corner.z)
+			low_corner.z = finalVertex[2];
+		else if(finalVertex[2] > high_corner.z)
+			high_corner.z = finalVertex[2];
 	}
 }
 
@@ -198,4 +213,14 @@ void Mesh::Render() const
 
 	glDrawElements (GL_TRIANGLES, mesh->num_tris * 3,
 					GL_UNSIGNED_INT, vertexIndices);
+}
+
+Vector3 Mesh::Get_low_corner()
+{
+	return low_corner;
+}
+
+Vector3 Mesh::Get_high_corner()
+{
+	return high_corner;
 }

@@ -27,6 +27,10 @@ public:
 	void Render();
 	
 	void Update(double dt);
+
+	Vector3 Get_low_corner();
+	Vector3 Get_high_corner();
+
 private:
 	bool paused;
 	anim_info_t animInfo;
@@ -35,6 +39,9 @@ private:
 	shared_ptr<Animated_model> model;
 
 	Meshbuffers meshbuffers;
+
+	Vector3 low_corner;
+	Vector3 high_corner;
 };
 
 #endif
