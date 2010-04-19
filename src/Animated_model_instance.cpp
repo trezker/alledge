@@ -44,9 +44,10 @@ void Animated_model_instance::Render()
 	{
 		glBindTexture(GL_TEXTURE_2D, texture->get_opengl_texture());
 		glEnable(GL_TEXTURE_2D);
-		glShadeModel(GL_SMOOTH);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+	else
+	{
+		glDisable(GL_TEXTURE_2D);
 	}
 	glPushMatrix();
 	glRotatef (-90.f, 1.0f, .0f, .0f);
@@ -63,13 +64,6 @@ void Animated_model_instance::Render()
 	}
 
 	glPopMatrix();
-
-	if(texture.get())
-	{
-		glDisable(GL_TEXTURE_2D);
-		glShadeModel(GL_FLAT);
-		glDisable(GL_BLEND);
-	}
 }
 
 void Animated_model_instance::Update(double dt)
@@ -130,6 +124,13 @@ void Animated_model_instance::Update(double dt)
 		if(hc.z > high_corner.z)
 			high_corner.z = hc.z;
 	}
+	float t = low_corner.y;
+	low_corner.y = low_corner.z;
+	low_corner.z = t;
+
+	t = high_corner.y;
+	high_corner.y = high_corner.z;
+	high_corner.z = t;
 }
 
 void Animated_model_instance::Pause_animation(bool b)
