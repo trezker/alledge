@@ -3,6 +3,7 @@
 #include "../alledge/Bitmap.h"
 
 Static_model::Static_model()
+:show_normals(false)
 {
 	for(int i=0; i<4; ++i)
 	{
@@ -141,16 +142,18 @@ void Static_model::Render()
 		glVertex3f(coords[*i].x, coords[*i].y, coords[*i].z);
 	}
 	glEnd();
-/*
-	glBegin(GL_LINES);
-	glColor4f(1, 1, 1, 1);
-	for(int i = 0; i<coords.size(); ++i)
+
+	if(show_normals)
 	{
-		glVertex3f(coords[i].x, coords[i].y, coords[i].z);
-		glVertex3f(coords[i].x + normals[i].x, coords[i].y + normals[i].y, coords[i].z + normals[i].z);
+		glBegin(GL_LINES);
+		glColor4f(1, 1, 1, 1);
+		for(int i = 0; i<coords.size(); ++i)
+		{
+			glVertex3f(coords[i].x, coords[i].y, coords[i].z);
+			glVertex3f(coords[i].x + normals[i].x, coords[i].y + normals[i].y, coords[i].z + normals[i].z);
+		}
+		glEnd();
 	}
-	glEnd();
-	*/
 }
 
 Vector3 Static_model::Get_low_corner()
@@ -161,6 +164,11 @@ Vector3 Static_model::Get_low_corner()
 Vector3 Static_model::Get_high_corner()
 {
 	return high_corner;
+}
+
+void Static_model::Show_normals(bool active)
+{
+	show_normals = active;
 }
 
 void Static_model::Set_model_data(Vectors c, Indexes f)
