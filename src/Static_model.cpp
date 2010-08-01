@@ -141,6 +141,16 @@ void Static_model::Render()
 		glVertex3f(coords[*i].x, coords[*i].y, coords[*i].z);
 	}
 	glEnd();
+/*
+	glBegin(GL_LINES);
+	glColor4f(1, 1, 1, 1);
+	for(int i = 0; i<coords.size(); ++i)
+	{
+		glVertex3f(coords[i].x, coords[i].y, coords[i].z);
+		glVertex3f(coords[i].x + normals[i].x, coords[i].y + normals[i].y, coords[i].z + normals[i].z);
+	}
+	glEnd();
+	*/
 }
 
 Vector3 Static_model::Get_low_corner()
@@ -166,5 +176,24 @@ void Static_model::Set_model_data(Vectors c, Indexes f)
 	for(Indexes::iterator i=f.begin(); i!=f.end(); ++i)
 	{
 		faces.push_back(*i);
+	}
+	for(Vectors::iterator i = normals.begin(); i != normals.end(); ++i)
+	{
+		i->Zero();
+	}
+	for(int i = 0; i<faces.size(); i+=3)
+	{
+		Vector3 in1 = coords[faces[i+1]] - coords[faces[i]];
+		Vector3 in2 = coords[faces[i+2]] - coords[faces[i]];
+		Vector3 norm = in2.CrossProduct(in1);
+		norm.Normalize();
+		for (int j = 0; j < 3; ++j)
+		{
+			normals[faces[i+j]] += norm;
+		}
+	}
+	for(Vectors::iterator i = normals.begin(); i != normals.end(); ++i)
+	{
+		i->Normalize();
 	}
 }
