@@ -44,7 +44,7 @@ solution (lib_name)
 			postbuildcommands { "tests/"..sname }
 	end
 
-	ex_dependencies = { "GL","GLU","glut","allegro-4.9.16","allegro_image-4.9.16","allegro_font-4.9.16","allegro_ttf-4.9.16","allegro_primitives-4.9.16","allegro_dialog-4.9.16" }
+	ex_dependencies = { "GL","GLU","glut","allegro","allegro_image","allegro_font","allegro_ttf","allegro_primitives","allegro_dialog" }
 	examples = os.matchfiles("examples/*.cpp")
 	for index, name in pairs(examples) do
 		sname = "example_"..name:sub(10, name:len()-4);

@@ -29,7 +29,8 @@ public:
 	{
 		float size = 0.01;
 		glScalef(size, -size, -size);
-		al_draw_text(font, 0, 0, ALLEGRO_ALIGN_CENTRE, text.c_str());
+		ALLEGRO_COLOR color = al_map_rgb_f(1, 1, 1);
+		al_draw_text(font, color, 0, 0, ALLEGRO_ALIGN_CENTRE, text.c_str());
 	}
 	void Postrender(){}
 private:
@@ -107,6 +108,7 @@ int main()
 	al_install_keyboard();
 	al_init_image_addon();
 	al_init_font_addon();
+	al_init_ttf_addon();
 
 	ALLEGRO_DISPLAY *display;
 	al_set_new_display_flags(ALLEGRO_WINDOWED | ALLEGRO_OPENGL);
