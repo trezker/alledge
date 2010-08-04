@@ -4,6 +4,7 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_opengl.h>
+#include "../alledge/Matrix4.h"
 
 Transformnode::Transformnode()
 {
@@ -38,6 +39,21 @@ Vector3 Transformnode::Get_rotation()
 Vector3 Transformnode::Get_scale()
 {
 	return scale;
+}
+
+Matrix4 Transformnode::Get_matrix()
+{
+	glPushMatrix();
+		glLoadIdentity();
+		Prerender();
+		float model[16];
+		glGetFloatv(GL_MODELVIEW_MATRIX, model);
+		Postrender();
+	glPopMatrix();
+
+	Matrix4 m;
+	m.Set(model);
+	return m;
 }
 
 void Transformnode::Prerender()

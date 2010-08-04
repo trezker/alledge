@@ -14,6 +14,7 @@ public:
 	Vector3 Get_position();
 	Vector3 Get_rotation();
 	Vector3 Get_scale();
+	Matrix4 Get_matrix();
 	
 	virtual void Prerender();
 	virtual void Postrender();
