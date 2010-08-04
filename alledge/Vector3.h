@@ -1,6 +1,8 @@
 #ifndef __MATH__VECTOR3_H
 #define __MATH__VECTOR3_H
 
+class Matrix4;
+
 class Vector3
 {
 public:
@@ -80,7 +82,7 @@ public:
 
 	//! \brief Transforms the vector with a matrix4.
 	//! \param matrix4 Is the matrix to transform this vector by
-//	void		TransformByMatrix4(const Matrix4& matrix4);
+	void		TransformByMatrix4(const Matrix4& matrix4);
 
 	//! \brief Transforms the vector with a quaternion.
 	//! \param quaternion Is the quaternion to transform this vector with

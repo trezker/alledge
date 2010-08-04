@@ -1,5 +1,6 @@
 #include <cmath>
 #include "../alledge/Vector3.h"
+#include "../alledge/Matrix4.h"
 
 const Vector3 Vector3::UNIT_X = Vector3(1.0f, 0.0f, 0.0f);
 const Vector3 Vector3::UNIT_Y = Vector3(0.0f, 1.0f, 0.0f);
@@ -146,7 +147,7 @@ Vector3::TransformByMatrix3(const Matrix4& matrix4)
 		(x * m[2] + y * m[6] + z * m[10]));
 	*this = vector3;
 }
-
+*/
 void
 Vector3::TransformByMatrix4(const Matrix4& matrix4)
 {
@@ -157,7 +158,7 @@ Vector3::TransformByMatrix4(const Matrix4& matrix4)
 		(x * m[2] + y * m[6] + z * m[10] + m[14]));
 	*this = vector3;
 }
-
+/*
 void
 Vector3::TransformByQuaternion(const Quaternion& quaternion)
 {
