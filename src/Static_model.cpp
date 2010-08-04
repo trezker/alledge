@@ -126,6 +126,7 @@ void Static_model::Render()
 	{
 		glDisable(GL_TEXTURE_2D);
 	}
+	glEnable(GL_CULL_FACE);
 
 	glEnable(GL_COLOR_MATERIAL);
 	glColor4fv(color);
@@ -145,6 +146,9 @@ void Static_model::Render()
 
 	if(show_normals)
 	{
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_COLOR_MATERIAL);
+		glDisable(GL_ALPHA_TEST);
 		glBegin(GL_LINES);
 		glColor4f(1, 1, 1, 1);
 		for(int i = 0; i<coords.size(); ++i)
@@ -193,12 +197,18 @@ void Static_model::Set_model_data(Vectors c, Indexes f)
 	{
 		Vector3 in1 = coords[faces[i+1]] - coords[faces[i]];
 		Vector3 in2 = coords[faces[i+2]] - coords[faces[i]];
-		Vector3 norm = in2.CrossProduct(in1);
+		Vector3 norm = in1.CrossProduct(in2);
 		norm.Normalize();
 		for (int j = 0; j < 3; ++j)
 		{
 			normals[faces[i+j]] += norm;
 		}
+		uv_coords[faces[i]].u = 1;
+		uv_coords[faces[i]].v = 0;
+		uv_coords[faces[i+1]].u = 0.5;
+		uv_coords[faces[i+1]].v = 1;
+		uv_coords[faces[i+2]].u = 0;
+		uv_coords[faces[i+2]].v = 0;
 	}
 	for(Vectors::iterator i = normals.begin(); i != normals.end(); ++i)
 	{
