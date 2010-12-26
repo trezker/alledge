@@ -24,7 +24,7 @@ shared_ptr<Static_model_node> model_node;
 bool Init()
 {
 	camera = new Cameranode();
-	camera->Set_position(Vector3(0, 0, 10));
+	camera->Set_position(Vector3(0, 0, 5));
 	camera->Set_rotation(Vector3(0, 0, 0));
 	root.Attach_node(camera);
 
@@ -54,10 +54,10 @@ bool Init()
 
 void Update(float dt)
 {
-	Vector3 rot = transform->Get_rotation();
+/*	Vector3 rot = transform->Get_rotation();
 	rot.y += 30*dt;
 	transform->Set_rotation(rot);
-}
+*/}
 
 void Render()
 {
@@ -82,6 +82,10 @@ void Render()
 
 void Event(ALLEGRO_EVENT event)
 {
+	if(ALLEGRO_EVENT_MOUSE_AXES == event.type)
+	{
+		transform->Set_rotation(Vector3(0, event.mouse.x, 0));
+	}
 }
 
 int main()

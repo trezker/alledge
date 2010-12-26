@@ -126,7 +126,6 @@ void Static_model::Render()
 	{
 		glDisable(GL_TEXTURE_2D);
 	}
-	glEnable(GL_CULL_FACE);
 
 	glEnable(GL_COLOR_MATERIAL);
 	glColor4fv(color);
