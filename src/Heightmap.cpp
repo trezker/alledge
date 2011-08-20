@@ -519,17 +519,15 @@ void Heightmap::Calc_normals_around(int x, int z)
 	sum.Normalize();
 	normals[Get_index(x, z)] = sum;
 }
-/*
-void Heightmap::Set_height(float ix, float iz, float height)
+
+void Heightmap::Set_height(float ix, float iz, float iheight)
 {
-	int x = ix/tilesize+.5;
-	int z = iz/tilesize+.5;
-	if(x<0 || z<0 || x>=width || z>=height)
+	if(ix<0 || iz<0 || ix>=width || iz>=height)
 		return;
-	vertices[Get_index(x, z)].y = height;
-//	rows[x][y].normal_dirty = true;
+	std::cout<<ix<<iz<<iheight<<std::endl;
+	vertices[Get_index(ix, iz)].y = iheight;
 }
-*/
+
 float Heightmap::Get_height(float ix, float iz)
 {
 	int tx = ix/tilesize;
