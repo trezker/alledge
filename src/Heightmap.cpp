@@ -524,7 +524,6 @@ void Heightmap::Set_height(float ix, float iz, float iheight)
 {
 	if(ix<0 || iz<0 || ix>=width || iz>=height)
 		return;
-	std::cout<<ix<<iz<<iheight<<std::endl;
 	vertices[Get_index(ix, iz)].y = iheight;
 }
 
