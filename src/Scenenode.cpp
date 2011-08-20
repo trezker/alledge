@@ -13,6 +13,11 @@ void Scenenode::Detach_node(shared_ptr<Scenenode> node)
 	children.erase(std::find(children.begin(), children.end(), node));
 }
 
+void Scenenode::Detach_all_nodes()
+{
+	children.clear();
+}
+
 void Scenenode::Apply()
 {
 	Prerender();

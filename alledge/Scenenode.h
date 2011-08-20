@@ -9,6 +9,7 @@ class Scenenode
 public:
 	void Attach_node(shared_ptr<Scenenode> node);
 	void Detach_node(shared_ptr<Scenenode> node);
+	void Detach_all_nodes();
 	void Apply();
 	
 	virtual void Prerender(){}
