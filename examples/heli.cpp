@@ -25,6 +25,9 @@ shared_ptr<Lightnode> light;
 shared_ptr<Transformnode> transform;
 shared_ptr<Heightmap> heightmap;
 shared_ptr<Linenode> line;
+shared_ptr<Linenode> cam_up;
+shared_ptr<Linenode> cam_front;
+shared_ptr<Linenode> cam_right;
 shared_ptr<Bitmap> texture;
 shared_ptr<Bitmap> texture2;
 shared_ptr<Bitmap> splat_texture;
@@ -56,7 +59,23 @@ bool Init()
 		std::cout<<"ERROR: Could not load splat_texture.png"<<std::endl;
 		return false;
 	}
-
+	
+	float upcolor[4] = {1, 0, 0, 1};
+	cam_up = new Linenode;
+	cam_up->Set_line(Vector3(0, 0, -10), Vector3(0, 1, -10));
+	cam_up->Set_color(upcolor);
+	root.Attach_node(cam_up);
+	float frontcolor[4] = {0, 1, 0, 1};
+	cam_front = new Linenode;
+	cam_front->Set_line(Vector3(0, 0, -10), Vector3(0, 0, -11));
+	cam_front->Set_color(frontcolor);
+	root.Attach_node(cam_front);
+	float rightcolor[4] = {0, 0, 1, 1};
+	cam_right = new Linenode;
+	cam_right->Set_line(Vector3(0, 0, -10), Vector3(1, 0, -10));
+	cam_right->Set_color(rightcolor);
+	root.Attach_node(cam_right);
+	
 	camera = new Cameranode();
 	camera->Set_position(Vector3(0, 5, 30));
 	camera->Set_rotation(Vector3(0, 0, 0));
@@ -292,8 +311,7 @@ void Event(ALLEGRO_EVENT event)
 	{
 		if(lmb)
 		{
-			//camera->Rotate_local_axis(Vector3(-event.mouse.dy, 0, -event.mouse.dx));
-			camera->Rotate_local_axis(Vector3(-10, 0, -10));
+			camera->Rotate_local_axis(Vector3(-event.mouse.dy, 0, event.mouse.dx));
 			//camera->Set_rotation(camera->Get_rotation() + Vector3(-event.mouse.dy, -event.mouse.dx, 0));
 		}
 		mouse_x = event.mouse.x;
@@ -361,6 +379,13 @@ int main()
 		Render();
 		al_draw_filled_rectangle(10, 10, 30, 210, al_map_rgb_f(1, 1, 1));
 		al_draw_filled_rectangle(10, 210, 30, 210-(lift/max_lift)*200, al_map_rgb_f(1, 0, 0));
+		Vector3 up = camera->Get_up();
+		Vector3 front = camera->Get_front();
+		Vector3 right = camera->Get_right();
+		cam_up->Set_line(Vector3(0, 0, -10), Vector3(0, 0, -10) + up);
+		cam_front->Set_line(Vector3(0, 0, -10), Vector3(0, 0, -10) + front);
+		cam_right->Set_line(Vector3(0, 0, -10), Vector3(0, 0, -10) + right);
+		
 		al_flip_display();
 
 		al_rest(0.001);

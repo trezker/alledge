@@ -111,13 +111,9 @@ void Cameranode::Set_rotation(Vector3 v)
 	right.Normalize();
 }
 
-
-/* TODO: Extract world rotation values after rotation
-*/
 void Cameranode::Rotate_local_axis(Vector3 v) {
 	Vector3 rotrad = v*(M_PI/180);
 	quat4_t quat_temp;
-	Quat_init(quat_total);
 
 	quat4_t quat_local;
 	Quat_from_axisangle(quat_local, right.x, right.y, right.z, rotrad.x);
@@ -134,24 +130,22 @@ void Cameranode::Rotate_local_axis(Vector3 v) {
 
 	vec3_t out;
 	Quat_to_euler(quat_total, out);
-	rotation.x -= out[0] * (180 / M_PI);
-	rotation.y -= out[1] * (180 / M_PI);
-	rotation.z -= out[2] * (180 / M_PI);
-
-	//std::cout<<rotation.x<<", "<<rotation.y<<", "<<rotation.z<<std::endl;
+	rotation.x = out[0] * (180 / M_PI);
+	rotation.y = out[1] * (180 / M_PI);
+	rotation.z = out[2] * (180 / M_PI);
 
 	vec3_t in;
-	in[0] = front.x;
-	in[1] = front.y;
-	in[2] = front.z;
+	in[0] = 0;
+	in[1] = 0;
+	in[2] = -1;
 	Quat_rotatePoint (quat_total, in, out);
 	front.x = out[0];
 	front.y = out[1];
 	front.z = out[2];
 
-	in[0] = up.x;
-	in[1] = up.y;
-	in[2] = up.z;
+	in[0] = 0;
+	in[1] = 1;
+	in[2] = 0;
 	Quat_rotatePoint (quat_total, in, out);
 	up.x = out[0];
 	up.y = out[1];
