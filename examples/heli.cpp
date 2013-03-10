@@ -134,7 +134,7 @@ float max_lift = 11;
 bool increase_lift = false;
 bool decrease_lift = false;
 
-float roll = 0;
+float yaw = 0;
 
 void Update(float dt)
 {
@@ -157,13 +157,19 @@ void Update(float dt)
 
 	if(move_left)
 	{
-		roll += dt*10;
+		yaw += dt*100;
 	}
-	if(move_right)
+	else if(move_right)
 	{
-		roll -= dt*10;
+		yaw -= dt*100;
+	}
+	else {
+		yaw += (yaw>0?-1:1)*dt*10;
+		if(abs(yaw) < 1) yaw = 0;
 	}
 	
+	camera->Rotate_local_axis(Vector3(0, yaw*dt, 0));
+
 /*	Vector3 rot = transform->Get_rotation();
 	rot.y += 30*dt;
 	rot.x += 60*dt;
