@@ -20,6 +20,8 @@ public:
 	void Set_rotation(Vector3 v);
 	Vector3 Get_position();
 	Vector3 Get_rotation();
+
+	void Rotate_local_axis(Vector3 v);
 	
 	void Set_rotate_around_world_origo(bool t);
 	

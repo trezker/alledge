@@ -28,5 +28,6 @@ float Quat_dotProduct (const quat4_t qa, const quat4_t qb);
 void Quat_slerp (const quat4_t qa, const quat4_t qb, float t, quat4_t out);
 
 void Quat_to_matrix4 (const quat4_t qa, matrix4_t mo);
+void Quat_to_euler(quat4_t q1, vec3_t out);
 
 #endif

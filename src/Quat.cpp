@@ -237,3 +237,33 @@ void Quat_to_matrix4 (const quat4_t q, matrix4_t mo)
 		0,
 		1);
 }
+
+void Quat_to_euler(quat4_t q1, vec3_t out) {
+	Quat_normalize(q1);
+	float heading;
+	float attitude;
+	float bank;
+	double test = q1[X]*q1[Y] + q1[Z]*q1[W];
+	if (test > 0.499) { // singularity at north pole
+		heading = 2 * atan2(q1[X],q1[W]);
+		attitude = M_PI/2;
+		bank = 0;
+		return;
+	}
+	if (test < -0.499) { // singularity at south pole
+		heading = -2 * atan2(q1[X],q1[W]);
+		attitude = - M_PI/2;
+		bank = 0;
+		return;
+	}
+    double sqx = q1[X]*q1[X];
+    double sqy = q1[Y]*q1[Y];
+    double sqz = q1[Z]*q1[Z];
+	attitude = asin(2*test);	
+    heading = atan2(2*q1[Y]*q1[W]-2*q1[X]*q1[Z] , 1 - 2*sqy - 2*sqz); 
+	bank = atan2(2*q1[X]*q1[W]-2*q1[Y]*q1[Z] , 1 - 2*sqx - 2*sqz); 
+	
+	out[0] = attitude; 	//Pitch
+	out[1] = heading;  	//yaw
+	out[2] = bank;		//Roll
+}
