@@ -5,6 +5,7 @@
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_image.h>
 
+#include "../alledge/Exception.h"
 #include "../alledge/Animated_model.h"
 #include "../alledge/Bitmap.h"
 
@@ -42,7 +43,7 @@ void Animated_model::Load_model(const std::string& filename)
 	/* Load MD5 model file */
 	if (!ReadMD5Model (filename.c_str(), &md5file))
 	{
-		//Todo: Handle error
+		throw(Exception("Could not load model file"));
 		return;
 	}
 	for(int i = 0; i<md5file.num_joints; ++i)
@@ -55,10 +56,16 @@ void Animated_model::Load_model(const std::string& filename)
 	for(int i = 0; i<md5file.num_meshes; ++i)
 	{
 		texture = new Bitmap;
-		texture->Load(md5file.meshes[i].shader);
+		if(!texture->Load(md5file.meshes[i].shader))
+		{
+			throw(Exception("Could not load texture file: " + std::string(md5file.meshes[i].shader)));
+			return;
+		}
+		
 		meshbuffers.push_back(Mesh());
 		meshbuffers[i].Set_up_buffers(&md5file.meshes[i], md5file.baseSkel);
 	}
+	return;
 }
 
 void Animated_model::New_buffers(Meshbuffers& buffers)
