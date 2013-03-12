@@ -99,7 +99,7 @@ bool Init()
 	transform->Attach_node(line);
 
 	heightmap = new Heightmap;
-	heightmap->Set_tilesize(1);
+	heightmap->Set_tilesize(10);
 	heightmap->Resize(50, 25);
 	heightmap->Set_texture(texture, 0);
 	heightmap->Set_texture(texture2, 1);
@@ -130,14 +130,15 @@ int mouse_y = 0;
 
 float lift = 0;
 float delta_lift = 10;
-float max_lift = 11;
+float max_lift = 20;
 bool increase_lift = false;
 bool decrease_lift = false;
 
 float yaw = 0;
 
-void Update(float dt)
-{
+Vector3 velocity;
+
+void Update(float dt) {
 	if(increase_lift) {
 		lift += dt*delta_lift;
 		if(lift>max_lift) lift = max_lift;
@@ -147,12 +148,19 @@ void Update(float dt)
 		if(lift < 0) lift = 0;
 	}
 	
+	velocity += camera->Get_up() * dt * lift;
+	velocity += Vector3(0, -10, 0) * dt;
+	float drag = velocity.SquaredLength() / 10000;
+	float newlength = velocity.Length() - drag;
+	velocity.Normalize();
+	velocity *= newlength;
+	std::cout<<drag<<std::endl;
 	Vector3 position = camera->Get_position();
-	position += camera->Get_up() * dt * lift;
-	
-	position += Vector3(0, -10, 0) * dt;
-	
-	if(position.y < 1) position.y = 1;
+	position += velocity * dt;
+	if(position.y < 1) {
+		position.y = 1;
+		velocity.y = 0;
+	}
 	camera->Set_position(position);
 
 	if(move_left)
