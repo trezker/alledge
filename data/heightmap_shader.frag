@@ -3,10 +3,10 @@ uniform sampler2D tex1;
 uniform sampler2D tex2;
 uniform sampler2D tex3;
 uniform sampler2D tex4;
-uniform int use_tex1;
-uniform int use_tex2;
-uniform int use_tex3;
-uniform int use_tex4;
+uniform bool use_tex1;
+uniform bool use_tex2;
+uniform bool use_tex3;
+uniform bool use_tex4;
 
 varying vec4 diffuse,ambient;
 varying vec3 normal,lightDir,halfVector;
@@ -15,7 +15,7 @@ void main()
 {
 	vec3 texAlpha    = texture2D( alpha, gl_TexCoord[0].st ).rgb;
 
-	vec3 tx = gl_Color;
+	vec3 tx = gl_Color.rgb;
 	
 	if(use_tex1)
 	{
@@ -67,7 +67,7 @@ void main()
 	vec3 ct,cf;
 	float at,af;
 	ct = tx.rgb;
-	at = 1;
+	at = 1.0;
 	cf = color.rgb;
 	af = color.a;
 	

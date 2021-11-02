@@ -38,6 +38,7 @@ bool Shader::Load_shader(const std::string& filename, GLenum shaderType)
 	{
 		return false;
 	}
+	//filestring = "#version 130\n" + filestring;
 	const char *shader_source = filestring.c_str();
 
 	glDeleteShader(shader); //In case this object already holds a shader.
@@ -51,6 +52,12 @@ bool Shader::Load_shader(const std::string& filename, GLenum shaderType)
 	if(GL_FALSE == err)
 	{
 		std::cout<<"Shader failed to compile"<<std::endl;
+		GLchar info[1024];
+		GLsizei infol;
+		glGetShaderInfoLog(shader, 1000, &infol, info);
+		std::cout<<shader_source<<std::endl;
+		std::cout<<infol<<std::endl;
+		std::cout<<info<<std::endl;
 	}
 }
 
