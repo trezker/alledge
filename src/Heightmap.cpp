@@ -9,6 +9,7 @@
 #include <cstdio>
 #include <cmath>
 #include <fstream>
+#include <GL/glext.h>
 
 Heightmap::Heightmap()
 :width(0)

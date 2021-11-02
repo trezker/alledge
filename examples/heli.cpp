@@ -1,3 +1,17 @@
+/* How to calculate wind resistance forces.
+ * Apply rotational force towards making the rotor flat in the direction the helicopter is moving.
+ * 
+ * If wind blows on a plane, how do I calculate the direction of the force on that plane?
+ * Simple model, as the angle increases from 0-90 degrees the direction of the force from drag
+ * angles down. Or it increases from 0 to 45 degrees, and goes back towards straght between 45 and 90 degrees.
+ * 
+ * 
+ * Rotorn befinner sig ovanför helikopterns masscentrum. När luften applicerar sin kraft mest på dess yta
+ * så trycker den off centre, bara det gör att man får rotationskraften. Gäller också 45 grader max?
+ * Om man googlar på reflektion/refraktion och surface eller nåt borde man kunna få fram lite bra matematik.
+ * http://en.wikipedia.org/wiki/Rigid_body_dynamics
+ * */
+
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_font.h>
@@ -35,7 +49,7 @@ shared_ptr<Bitmap> splat_texture;
 bool Init()
 {
 	int MaxTextureImageUnits;
-	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &MaxTextureImageUnits);
+	glGetIntegerv(GL_MAX_TEXTURE_UNITS, &MaxTextureImageUnits);
 	std::cout<<"Max texture units: "<<MaxTextureImageUnits<<std::endl;
 
 	texture = new Bitmap;

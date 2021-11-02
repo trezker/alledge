@@ -57,7 +57,7 @@ Vector3 GetOGLPos(int x, int y, shared_ptr<Cameranode> camera)
 bool Init()
 {
 	int MaxTextureImageUnits;
-	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &MaxTextureImageUnits);
+	glGetIntegerv(GL_MAX_TEXTURE_UNITS, &MaxTextureImageUnits);
 	std::cout<<"Max texture units: "<<MaxTextureImageUnits<<std::endl;
 
 	texture = new Bitmap;

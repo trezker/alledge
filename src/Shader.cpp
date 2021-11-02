@@ -1,6 +1,7 @@
 #include "../alledge/Shader.h"
 #include <fstream>
 #include <iostream>
+#include <GL/glext.h>
 
 bool loadstring(const std::string& filename, std::string &shader)
 {

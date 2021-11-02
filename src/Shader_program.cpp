@@ -1,5 +1,6 @@
 #include "../alledge/Shader_program.h"
 #include "../alledge/Shader.h"
+#include <GL/glext.h>
 
 Shader_program::Shader_program()
 {
