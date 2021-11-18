@@ -278,7 +278,7 @@ void Event(ALLEGRO_EVENT event)
 	{
 		if(lmb)
 		{
-			camera->Set_rotation(camera->Get_rotation() + Vector3(-event.mouse.dy, -event.mouse.dx, 0));
+			camera->Set_rotation(camera->Get_rotation() + Vector3(-event.mouse.dy*0.1, -event.mouse.dx*0.1, 0));
 		}
 		mouse_x = event.mouse.x;
 		mouse_y = event.mouse.y;
