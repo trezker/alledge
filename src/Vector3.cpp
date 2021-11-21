@@ -73,6 +73,12 @@ Vector3::SquaredLength() const
 }
 
 float
+Vector3::DotProduct2(float xin, float yin) const
+{
+	return ((x * xin) + (y * yin));
+}
+
+float
 Vector3::DotProduct(const Vector3& vector3) const
 {
 	return ((vector3.x * x) + (vector3.y * y) + (vector3.z * z));
@@ -265,12 +271,13 @@ Vector3::operator / (const float scalar) const
 	return vector3Temp;
 }
 
-void
+Vector3
 Vector3::operator = (const Vector3 &vector3)
 {
 	x = vector3.x;
 	y = vector3.y;
 	z = vector3.z;
+	return vector3;
 }
 
 bool

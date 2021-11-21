@@ -44,6 +44,8 @@ public:
 	//!	\return Returns true if the vector is zero, otherwise false.
 	bool		IsZero() const;
 
+	float		DotProduct2(float x, float y) const;
+
 	//! \brief Dotproduct between the two vectors.
 	//! \param vector3 Used to calculate the dot product with this vector.
 	//! \return Returns the dot product between the two vectors
@@ -108,7 +110,7 @@ public:
 	void		operator *= (const float scalar);
 	void		operator /= (const float scalar);
 
-	void		operator = (const Vector3 &vector3);
+	Vector3		operator = (const Vector3 &vector3);
 	bool		operator == (const Vector3 &vector3);
 	bool		operator != (const Vector3 &vector3);
 
