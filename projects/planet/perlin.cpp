@@ -1,6 +1,7 @@
 #include "perlin.h"
 #include "../../alledge/Vector3.h"
 #include <cmath>
+#include <iostream>
 
 /*
  * A speed-improved perlin and simplex noise algorithms for 2D.
@@ -58,28 +59,29 @@ int perm[512];
 Vector3 gradP[512];
 
 // Skewing and unskewing factors for 2, 3, and 4 dimensions
-float F2 = 0.5*(sqrt(3)-1);
-float G2 = (3-sqrt(3))/6;
+float F2 = 0.5f*(sqrt(3.0f)-1.0f);
+float G2 = (3.0f-sqrt(3.0f))/6.0f;
 
-float F3 = 1/3;
-float G3 = 1/6;
+float F3 = 1.0f/3.0f;
+float G3 = 1.0f/6.0f;
 
 float fade(float t) {
-  return t*t*t*(t*(t*6-15)+10);
+  return t*t*t*(t*(t*6.0f-15.0f)+10.0f);
 }
 
 float lerp(float a, float b, float t) {
-  return (1-t)*a + t*b;
+  return (1.0f-t)*a + t*b;
 }
 
 void Perlin::Seed(int s) {
   seed = s;
+  /*
   if(seed > 0 && seed < 1) {
     // Scale the seed out
     seed *= 65536;
   }
 
-  seed = floor(seed);
+  seed = floor(seed);*/
   if(seed < 256) {
     seed |= seed << 8;
   }
@@ -272,13 +274,15 @@ float Perlin::Perlin2(float x, float y) {
 };
 
 // 3D Perlin Noise
-float Perlin::Perlin3(float x, float y, float z) {
+float Perlin::Perlin3(float xin, float yin, float zin) {
   // Find unit grid cell containing point
-  int X = floor(x);
-  int Y = floor(y);
-  int Z = floor(z);
+  int X = floor(xin);
+  int Y = floor(yin);
+  int Z = floor(zin);
   // Get relative xyz coordinates of point within that cell
-  x = x - X; y = y - Y; z = z - Z;
+  float x = xin - X; 
+  float y = yin - Y; 
+  float z = zin - Z;
   // Wrap the integer cells at 255 (smaller integer period can be introduced here)
   X = X & 255; Y = Y & 255; Z = Z & 255;
 

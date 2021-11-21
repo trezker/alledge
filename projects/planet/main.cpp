@@ -14,6 +14,7 @@
 #include "../../alledge/Bitmap.h"
 
 #include "marching_cubes.h"
+#include "perlin.h"
 
 Scenenode root;
 shared_ptr<Cameranode> camera;
@@ -22,6 +23,27 @@ shared_ptr<Transformnode> transform;
 shared_ptr<Transformnode> transform2;
 shared_ptr<Static_model> model;
 shared_ptr<Static_model_node> model_node;
+
+class PerlinSphere {
+private:
+	Perlin perlin;
+	int radius;
+public:
+	PerlinSphere(Perlin p, int r) {
+		perlin = p;
+		//perlin.Seed(seed);
+		radius = r;
+	}
+
+	float Sample(Vector3 pos) {
+		Vector3 pp = pos*10.214;
+		float p = perlin.Perlin3(pp.x, pp.y, pp.z);
+		std::cout<<p<<std::endl;
+		//std::cout<<pos.x<<" "<<pos.y<<" "<<pos.z<<std::endl;
+
+		return pos.Length() - radius + p;
+	}
+};
 
 bool Init()
 {
@@ -37,10 +59,12 @@ bool Init()
 	transform = new Transformnode;
 	light->Attach_node(transform);
 
-
-	SphereSampler spheresampler(8);
+	//SphereSampler spheresampler(8);
+	Perlin p;
+	p.Seed(0);
+	PerlinSphere spheresampler(p, 8);
 	Marching_cubes mc;
-	mc.Set_sampler(std::bind(&SphereSampler::Sample, &spheresampler, std::placeholders::_1));
+	mc.Set_sampler(std::bind(&PerlinSphere::Sample, &spheresampler, std::placeholders::_1));
 	for(int x = -8; x<8; ++x) {
 		for(int y = -8; y<8; ++y) {
 			for(int z = -8; z<8; ++z) {
