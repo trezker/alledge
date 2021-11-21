@@ -37,23 +37,10 @@ bool Init()
 	transform = new Transformnode;
 	light->Attach_node(transform);
 
-	model = new Static_model;
-/*	model->Load_model("data/handgun.tmf");
-	shared_ptr<Bitmap> texture = new Bitmap;
-	if(texture->Load("data/handgun.png"))
-		model->Set_texture(texture);
-*/
-	Static_model::Vectors c;// = new Static_model::Vectors();
-	c.push_back(Vector3(0, 0, 1));
-	c.push_back(Vector3(0, 1, 0));
-	c.push_back(Vector3(1, 0, 0));
-	Static_model::Indexes f;// = new Static_model::Indexes();
-	f.push_back(0);
-	f.push_back(1);
-	f.push_back(2);
-//	model->Set_model_data(c, f);
 
+	SphereSampler spheresampler(8);
 	Marching_cubes mc;
+	mc.Set_sampler(std::bind(&SphereSampler::Sample, &spheresampler, std::placeholders::_1));
 	for(int x = -8; x<8; ++x) {
 		for(int y = -8; y<8; ++y) {
 			for(int z = -8; z<8; ++z) {
@@ -61,6 +48,7 @@ bool Init()
 			}
 		}
 	}
+	model = new Static_model;
 	model->Set_model_data(mc.vertices, mc.indices);
 
 	float color[4] = {1, 0, 1, 1};

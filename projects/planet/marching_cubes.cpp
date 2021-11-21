@@ -1,11 +1,13 @@
 #include "marching_cubes.h"
 #include "marching_cubes_data.h"
 
-// scalar value at given point
-// replace with sampling from voxel data or whetever you'd like to
+void Marching_cubes::Set_sampler(Sampler s) {
+	sampler = s;
+}
+
 float Marching_cubes::SampleValue(Vector3 pos)
 {
-	return pos.Length() - RADIUS;
+	return sampler(pos);
 }
 
 void Marching_cubes::Clear()
