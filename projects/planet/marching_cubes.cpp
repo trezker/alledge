@@ -1,178 +1,62 @@
-#include <allegro5/allegro5.h>
-#include <allegro5/allegro_image.h>
-#include <allegro5/allegro_font.h>
-#include <allegro5/allegro_ttf.h>
-#include <allegro5/allegro_opengl.h>
-#include <iostream>
-
-#include "../../alledge/View.h"
-#include "../../alledge/Scenenode.h"
-#include "../../alledge/Cameranode.h"
-#include "../../alledge/Lightnode.h"
-#include "../../alledge/Transformnode.h"
-#include "../../alledge/Static_model_node.h"
-#include "../../alledge/Bitmap.h"
-
 #include "marching_cubes.h"
+#include "marching_cubes_data.h"
 
-Scenenode root;
-shared_ptr<Cameranode> camera;
-shared_ptr<Lightnode> light;
-shared_ptr<Transformnode> transform;
-shared_ptr<Transformnode> transform2;
-shared_ptr<Static_model> model;
-shared_ptr<Static_model_node> model_node;
-
-bool Init()
+// scalar value at given point
+// replace with sampling from voxel data or whetever you'd like to
+float MCubesRef::SampleValue(Vector3 pos)
 {
-	camera = new Cameranode();
-	camera->Set_position(Vector3(0, 0, 5));
-	camera->Set_rotation(Vector3(0, 0, 0));
-	root.Attach_node(camera);
-
-	light = new Lightnode;
-	light->Set_position(Vector3(1, 1, 1), true);
-	camera->Attach_node(light);
-
-	transform = new Transformnode;
-	light->Attach_node(transform);
-
-	model = new Static_model;
-/*	model->Load_model("data/handgun.tmf");
-	shared_ptr<Bitmap> texture = new Bitmap;
-	if(texture->Load("data/handgun.png"))
-		model->Set_texture(texture);
-*/
-	Static_model::Vectors c;// = new Static_model::Vectors();
-	c.push_back(Vector3(0, 0, 1));
-	c.push_back(Vector3(0, 1, 0));
-	c.push_back(Vector3(1, 0, 0));
-	Static_model::Indexes f;// = new Static_model::Indexes();
-	f.push_back(0);
-	f.push_back(1);
-	f.push_back(2);
-//	model->Set_model_data(c, f);
-
-	MCubesRef *mc = new MCubesRef;
-	for(int x = -8; x<8; ++x) {
-		for(int y = -8; y<8; ++y) {
-			for(int z = -8; z<8; ++z) {
-				mc->MarchCube(Vector3(x, y, z));
-			}
-		}
-	}
-	model->Set_model_data(mc->vertices, mc->indices);
-
-	float color[4] = {1, 0, 1, 1};
-//	model->Set_color(color);
-	model_node = new Static_model_node;
-	model_node->Set_model(model);
-	transform->Attach_node(model_node);
-	transform->Set_position(Vector3(0, 0, -18));
-
-	return true;
+	return pos.Length() - RADIUS;
 }
 
-void Update(float dt)
+void MCubesRef::Clear()
 {
-/*	Vector3 rot = transform->Get_rotation();
-	rot.y += 30*dt;
-	transform->Set_rotation(rot);
-*/}
-
-void Render()
-{
-	float fov = 45.f;
-	float near = 1.f;
-	float far = 1000.f;
-	float width = 640;
-	float height = 480;
-	Init_perspective_view(fov, width/height, near, far);
-
-	glEnable(GL_DEPTH_TEST);
-	glClear(GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_LIGHTING);
-
-	root.Apply();
-
-	glDisable(GL_LIGHTING);
-	glDisable(GL_DEPTH_TEST);
-
-	Pop_view();
+	vertices.clear();
+	indices.clear();
 }
 
-void Event(ALLEGRO_EVENT event)
+void MCubesRef::MarchCube(Vector3 minCornerPos)
 {
-	if(ALLEGRO_EVENT_MOUSE_AXES == event.type)
+	// construct case index from 8 corner samples
+	int caseIndex = 0; 
+	for(int i = 0; i < 8; i++)
 	{
-		transform->Set_rotation(Vector3(0, event.mouse.x, 0));
-	}
-}
-
-int main()
-{
-	al_init();
-	al_install_mouse();
-	al_install_keyboard();
-	al_init_image_addon();
-	al_init_font_addon();
-
-	ALLEGRO_DISPLAY *display;
-	al_set_new_display_flags(ALLEGRO_WINDOWED | ALLEGRO_OPENGL);
-	al_set_new_display_option(ALLEGRO_DEPTH_SIZE, 24, ALLEGRO_REQUIRE);
-	display = al_create_display(800, 600);
-	if(!display)
-	{
-		std::cout<<"Failed to create display"<<std::endl;
-		return 0;
+		float sample = SampleValue(minCornerPos + cornerOffsets[i]);
+		if (sample >= 0.0f)
+			caseIndex |= 1 << i;
 	}
 
-	ALLEGRO_EVENT_QUEUE *event_queue = al_create_event_queue();
-	al_register_event_source(event_queue, (ALLEGRO_EVENT_SOURCE *)display);
-	al_register_event_source(event_queue, al_get_keyboard_event_source());
-	al_register_event_source(event_queue, al_get_mouse_event_source());
+	// early out if entirely inside or outside the volume
+	if (caseIndex == 0 || caseIndex == 0xFF)
+		return;
 
-	if(!Init())
-		return 0;
-
-	double last_time = al_current_time();
-
-	bool quit = false;
-	while(1)
+	int caseVert = 0;
+	for(int i = 0; i < 5; i++)
 	{
-		ALLEGRO_EVENT event;
-		while (al_get_next_event(event_queue, &event))
+		for(int tri = 0; tri < 3; tri++)
 		{
-			if (ALLEGRO_EVENT_KEY_DOWN == event.type)
-			{
-				if (ALLEGRO_KEY_ESCAPE == event.keyboard.keycode)
-				{
-					quit = true;
-				}
-			}
-			if (ALLEGRO_EVENT_DISPLAY_CLOSE == event.type)
-			{
-				quit = true;
-			}
-			Event(event);
+			// get edge index
+			int edgeCase = triangleTable[caseIndex][caseVert];
+			if (edgeCase == -1)
+				return;
+			Vector3 vert1 = minCornerPos + edgeVertexOffsets[edgeCase][0]; // beginning of the edge
+			Vector3 vert2 = minCornerPos + edgeVertexOffsets[edgeCase][1]; // end of the edge
+
+			//Vector3 vertPos = (vert1 + vert2) / 2.0f; // non interpolated version - in the middle of the edge
+
+			// interpolate along the edge
+			float s1 = SampleValue(minCornerPos + edgeVertexOffsets[edgeCase][0]);
+			float s2 = SampleValue(minCornerPos + edgeVertexOffsets[edgeCase][1]);
+			float dif = s1 - s2;
+			if (dif == 0.0f)
+				dif = 0.5f;
+			else
+				dif = s1 / dif;
+			// Lerp
+			Vector3 vertPosInterpolated = vert1 + ((vert2 - vert1) * dif);
+			vertices.push_back(vertPosInterpolated);
+			indices.push_back(vertices.size() - 1);
+
+			caseVert++;
 		}
-		if (quit)
-			break;
-
-		double current_time = al_current_time();
-		double dt = current_time - last_time;
-		last_time = current_time;
-		Update(dt);
-
-		al_clear_to_color(al_map_rgb(0, 0, 0));
-		Render();
-		al_flip_display();
-
-		al_rest(0.001);
 	}
-
-	al_destroy_event_queue(event_queue);
-	al_destroy_display(display);
-	return 0;
 }
-
