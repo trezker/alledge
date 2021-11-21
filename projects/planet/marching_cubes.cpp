@@ -3,18 +3,18 @@
 
 // scalar value at given point
 // replace with sampling from voxel data or whetever you'd like to
-float MCubesRef::SampleValue(Vector3 pos)
+float Marching_cubes::SampleValue(Vector3 pos)
 {
 	return pos.Length() - RADIUS;
 }
 
-void MCubesRef::Clear()
+void Marching_cubes::Clear()
 {
 	vertices.clear();
 	indices.clear();
 }
 
-void MCubesRef::MarchCube(Vector3 minCornerPos)
+void Marching_cubes::MarchCube(Vector3 minCornerPos)
 {
 	// construct case index from 8 corner samples
 	int caseIndex = 0; 

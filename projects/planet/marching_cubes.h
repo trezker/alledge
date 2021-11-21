@@ -4,7 +4,7 @@
 typedef std::vector<Vector3> Vectors;
 typedef std::vector<int> Indexes;
 
-class MCubesRef {
+class Marching_cubes {
 public:
 	const float RADIUS = 8.0f; // sphere radius
 	Vectors vertices;

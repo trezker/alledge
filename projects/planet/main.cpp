@@ -53,15 +53,15 @@ bool Init()
 	f.push_back(2);
 //	model->Set_model_data(c, f);
 
-	MCubesRef *mc = new MCubesRef;
+	Marching_cubes mc;
 	for(int x = -8; x<8; ++x) {
 		for(int y = -8; y<8; ++y) {
 			for(int z = -8; z<8; ++z) {
-				mc->MarchCube(Vector3(x, y, z));
+				mc.MarchCube(Vector3(x, y, z));
 			}
 		}
 	}
-	model->Set_model_data(mc->vertices, mc->indices);
+	model->Set_model_data(mc.vertices, mc.indices);
 
 	float color[4] = {1, 0, 1, 1};
 //	model->Set_color(color);
