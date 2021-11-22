@@ -36,7 +36,7 @@ public:
 	}
 
 	float Sample(Vector3 pos) {
-		Vector3 pp = pos*10.214;
+		Vector3 pp = pos*8.5;
 		float p = perlin.Perlin3(pp.x, pp.y, pp.z);
 		std::cout<<p<<std::endl;
 		//std::cout<<pos.x<<" "<<pos.y<<" "<<pos.z<<std::endl;
@@ -65,9 +65,9 @@ bool Init()
 	PerlinSphere spheresampler(p, 8);
 	Marching_cubes mc;
 	mc.Set_sampler(std::bind(&PerlinSphere::Sample, &spheresampler, std::placeholders::_1));
-	for(int x = -8; x<8; ++x) {
-		for(int y = -8; y<8; ++y) {
-			for(int z = -8; z<8; ++z) {
+	for(int x = -10; x<10; ++x) {
+		for(int y = -10; y<10; ++y) {
+			for(int z = -10; z<10; ++z) {
 				mc.MarchCube(Vector3(x, y, z));
 			}
 		}
