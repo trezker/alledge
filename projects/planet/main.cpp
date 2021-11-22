@@ -38,7 +38,7 @@ public:
 	float Sample(Vector3 pos) {
 		Vector3 pp = pos*8.5;
 		float p = perlin.Perlin3(pp.x, pp.y, pp.z);
-		std::cout<<p<<std::endl;
+		//std::cout<<p<<std::endl;
 		//std::cout<<pos.x<<" "<<pos.y<<" "<<pos.z<<std::endl;
 
 		return pos.Length() - radius + p;
@@ -65,6 +65,8 @@ bool Init()
 	PerlinSphere spheresampler(p, 8);
 	Marching_cubes mc;
 	mc.Set_sampler(std::bind(&PerlinSphere::Sample, &spheresampler, std::placeholders::_1));
+
+	double start = al_get_time();
 	for(int x = -10; x<10; ++x) {
 		for(int y = -10; y<10; ++y) {
 			for(int z = -10; z<10; ++z) {
@@ -72,6 +74,11 @@ bool Init()
 			}
 		}
 	}
+	double end = al_get_time();
+	double d = end-start;
+	std::cout<<d<<std::endl;
+	std::cout<<mc.vertices.size()<<" "<<mc.indices.size()<<std::endl;
+
 	model = new Static_model;
 	model->Set_model_data(mc.vertices, mc.indices);
 

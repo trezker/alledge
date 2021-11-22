@@ -1,4 +1,5 @@
 #include "../../alledge/Vector3.h"
+#include <map>
 #include <vector>
 #include <functional>
 
@@ -12,6 +13,9 @@ public:
 	const float RADIUS = 8.0f; // sphere radius
 	Vectors vertices;
 	Indexes indices;
+
+	typedef std::map<Vector3, int, Vector3_comparator> Cornermap;
+	Cornermap cornermap;
 
 	Sampler sampler;
 

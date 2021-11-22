@@ -14,6 +14,7 @@ void Marching_cubes::Clear()
 {
 	vertices.clear();
 	indices.clear();
+	cornermap.clear();
 }
 
 void Marching_cubes::MarchCube(Vector3 minCornerPos)
@@ -43,9 +44,10 @@ void Marching_cubes::MarchCube(Vector3 minCornerPos)
 			Vector3 vert1 = minCornerPos + edgeVertexOffsets[edgeCase][0]; // beginning of the edge
 			Vector3 vert2 = minCornerPos + edgeVertexOffsets[edgeCase][1]; // end of the edge
 
-			//Vector3 vertPos = (vert1 + vert2) / 2.0f; // non interpolated version - in the middle of the edge
+			Vector3 vertPosInterpolated = (vert1 + vert2) / 2.0f; // non interpolated version - in the middle of the edge
 
 			// interpolate along the edge
+			/*
 			float s1 = SampleValue(minCornerPos + edgeVertexOffsets[edgeCase][0]);
 			float s2 = SampleValue(minCornerPos + edgeVertexOffsets[edgeCase][1]);
 			float dif = s1 - s2;
@@ -55,8 +57,17 @@ void Marching_cubes::MarchCube(Vector3 minCornerPos)
 				dif = s1 / dif;
 			// Lerp
 			Vector3 vertPosInterpolated = vert1 + ((vert2 - vert1) * dif);
-			vertices.push_back(vertPosInterpolated);
-			indices.push_back(vertices.size() - 1);
+			*/
+			if(cornermap.find(vertPosInterpolated) != cornermap.end()) {
+				int index = cornermap[vertPosInterpolated];
+				indices.push_back(index);
+			}
+			else
+			{
+				vertices.push_back(vertPosInterpolated);
+				indices.push_back(vertices.size() - 1);
+				cornermap[vertPosInterpolated] = vertices.size() - 1;
+			}
 
 			caseVert++;
 		}

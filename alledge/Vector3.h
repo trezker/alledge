@@ -137,4 +137,13 @@ public:
 	};
 };
 
+class Vector3_comparator {
+    public:
+        bool operator()(const Vector3& lhs, const Vector3& rhs) const {
+            return lhs.x < rhs.x
+                || ( lhs.x == rhs.x && ( lhs.y < rhs.y
+                || ( lhs.y == rhs.y && lhs.z < rhs.z)));
+        }
+};
+
 #endif
