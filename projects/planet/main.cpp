@@ -40,8 +40,10 @@ public:
 		float p = perlin.Perlin3(pp.x, pp.y, pp.z);
 		//std::cout<<p<<std::endl;
 		//std::cout<<pos.x<<" "<<pos.y<<" "<<pos.z<<std::endl;
+		if(pos.Length() > radius)
+			return -1;
 
-		return pos.Length() - radius + p;
+		return p-0.4;
 	}
 };
 
@@ -62,32 +64,112 @@ bool Init()
 	//SphereSampler spheresampler(8);
 	Perlin p;
 	p.Seed(0);
-	PerlinSphere spheresampler(p, 8);
+	PerlinSphere spheresampler(p, 16);
 	Marching_cubes mc;
 	mc.Set_sampler(std::bind(&PerlinSphere::Sample, &spheresampler, std::placeholders::_1));
 
+
 	double start = al_get_time();
-	for(int x = -10; x<10; ++x) {
-		for(int y = -10; y<10; ++y) {
-			for(int z = -10; z<10; ++z) {
+	/*
+	for(int x = -20; x<20; ++x) {
+		for(int y = -20; y<20; ++y) {
+			for(int z = -20; z<20; ++z) {
 				mc.MarchCube(Vector3(x, y, z));
 			}
 		}
 	}
+	*/
+
+	int n = 100;
+	float ns  = 2.0f/n;
+	int i = 0;
+
+	Vectors vertices;
+	Indexes indices;
+	for(int x = 0; x<n; ++x) {
+		for(int y = 0; y < n; ++y) {
+			vertices.push_back(Vector3(x*ns-1,    y*ns-1,    1));
+			vertices.push_back(Vector3(x*ns+ns-1, y*ns-1,    1));
+			vertices.push_back(Vector3(x*ns-1,    y*ns+ns-1, 1));
+			vertices.push_back(Vector3(x*ns+ns-1, y*ns+ns-1, 1));
+			indices.insert(indices.end(), {i, i+2, i+1, i+1, i+2, i+3});
+			i+=4;
+
+			vertices.push_back(Vector3(x*ns-1,    y*ns-1,    -1));
+			vertices.push_back(Vector3(x*ns+ns-1, y*ns-1,    -1));
+			vertices.push_back(Vector3(x*ns-1,    y*ns+ns-1, -1));
+			vertices.push_back(Vector3(x*ns+ns-1, y*ns+ns-1, -1));
+			indices.insert(indices.end(), {i, i+1, i+2, i+1, i+3, i+2});
+			i+=4;
+			
+		}
+		
+		for(int z = 0; z < n; ++z) {
+			vertices.push_back(Vector3(x*ns-1,    1, z*ns-1));
+			vertices.push_back(Vector3(x*ns+ns-1, 1, z*ns-1));
+			vertices.push_back(Vector3(x*ns-1,    1, z*ns+ns-1));
+			vertices.push_back(Vector3(x*ns+ns-1, 1, z*ns+ns-1));
+			indices.insert(indices.end(), {i, i+2, i+1, i+1, i+2, i+3});
+			i+=4;
+
+			vertices.push_back(Vector3(x*ns-1,    -1, z*ns-1));
+			vertices.push_back(Vector3(x*ns+ns-1, -1, z*ns-1));
+			vertices.push_back(Vector3(x*ns-1,    -1, z*ns+ns-1));
+			vertices.push_back(Vector3(x*ns+ns-1, -1, z*ns+ns-1));
+			indices.insert(indices.end(), {i, i+1, i+2, i+1, i+3, i+2});
+			i+=4;
+		}
+	}
+	for(int y = 0; y < n; ++y) {
+		for(int z = 0; z < n; ++z) {
+			vertices.push_back(Vector3(1, y*ns-1,    z*ns-1));
+			vertices.push_back(Vector3(1, y*ns+ns-1, z*ns-1));
+			vertices.push_back(Vector3(1, y*ns-1,    z*ns+ns-1));
+			vertices.push_back(Vector3(1, y*ns+ns-1, z*ns+ns-1));
+			indices.insert(indices.end(), {i, i+2, i+1, i+1, i+2, i+3});
+			i+=4;
+
+			vertices.push_back(Vector3(-1, y*ns-1,    z*ns-1));
+			vertices.push_back(Vector3(-1, y*ns+ns-1, z*ns-1));
+			vertices.push_back(Vector3(-1, y*ns-1,    z*ns+ns-1));
+			vertices.push_back(Vector3(-1, y*ns+ns-1, z*ns+ns-1));
+			indices.insert(indices.end(), {i, i+1, i+2, i+1, i+3, i+2});
+			i+=4;
+		}
+	}
+/*
+	vertices.push_back(Vector3(-1, 1, 1));
+	vertices.push_back(Vector3( 1, 1, 1));
+	vertices.push_back(Vector3(-1, 1,-1));
+	vertices.push_back(Vector3( 1, 1,-1));
+	vertices.push_back(Vector3(-1,-1, 1));
+	vertices.push_back(Vector3( 1,-1, 1));
+	vertices.push_back(Vector3(-1,-1,-1));
+	vertices.push_back(Vector3( 1,-1,-1));
+
+	indices.insert(indices.end(), {0, 2, 1, 1, 2, 3});
+	indices.insert(indices.end(), {1, 3, 5, 5, 3, 7});
+	indices.insert(indices.end(), {2, 6, 3, 3, 6, 7});
+	indices.insert(indices.end(), {0, 1, 4, 4, 1, 5});
+	indices.insert(indices.end(), {0, 4, 2, 2, 4, 6});
+	indices.insert(indices.end(), {4, 5, 7, 7, 6, 4});
+*/
 	double end = al_get_time();
 	double d = end-start;
 	std::cout<<d<<std::endl;
-	std::cout<<mc.vertices.size()<<" "<<mc.indices.size()<<std::endl;
+	//std::cout<<mc.vertices.size()<<" "<<mc.indices.size()<<std::endl;
 
 	model = new Static_model;
-	model->Set_model_data(mc.vertices, mc.indices);
+	//model->Set_model_data(mc.vertices, mc.indices);
+	model->Set_model_data(vertices, indices);
+	model->Show_wireframe(true);
 
 	float color[4] = {1, 0, 1, 1};
 //	model->Set_color(color);
 	model_node = new Static_model_node;
 	model_node->Set_model(model);
 	transform->Attach_node(model_node);
-	transform->Set_position(Vector3(0, 0, -18));
+	transform->Set_position(Vector3(0, 0, -2));
 
 	return true;
 }
@@ -124,7 +206,7 @@ void Event(ALLEGRO_EVENT event)
 {
 	if(ALLEGRO_EVENT_MOUSE_AXES == event.type)
 	{
-		transform->Set_rotation(Vector3(0, event.mouse.x, 0));
+		transform->Set_rotation(Vector3(event.mouse.y, event.mouse.x, 0));
 	}
 }
 

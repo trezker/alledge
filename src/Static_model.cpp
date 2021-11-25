@@ -117,6 +117,7 @@ void Static_model::Load_model(const std::string& filename)
 
 void Static_model::Render()
 {
+	
 	if(texture.get())
 	{
 		glBindTexture(GL_TEXTURE_2D, texture->get_opengl_texture());
@@ -143,19 +144,36 @@ void Static_model::Render()
 	}
 	glEnd();
 
-	if(show_normals)
+	if(show_normals || show_wireframe)
 	{
+		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
 		glDisable(GL_COLOR_MATERIAL);
 		glDisable(GL_ALPHA_TEST);
 		glBegin(GL_LINES);
-		glColor4f(1, 1, 1, 1);
-		for(int i = 0; i<coords.size(); ++i)
+		if(show_normals)
 		{
-			glVertex3f(coords[i].x, coords[i].y, coords[i].z);
-			glVertex3f(coords[i].x + normals[i].x, coords[i].y + normals[i].y, coords[i].z + normals[i].z);
+			glColor4f(1, 1, 1, 1);
+			for(int i = 0; i<coords.size(); ++i)
+			{
+				glVertex3f(coords[i].x, coords[i].y, coords[i].z);
+				glVertex3f(coords[i].x + normals[i].x, coords[i].y + normals[i].y, coords[i].z + normals[i].z);
+			}
+		}
+		if(show_wireframe) {
+			glColor4f(1, 0, 0, 1);
+			for(int i=0; i<faces.size(); i+=3)
+			{
+				glVertex3f(coords[faces[i]].x, coords[faces[i]].y, coords[faces[i]].z);
+				glVertex3f(coords[faces[i+1]].x, coords[faces[i+1]].y, coords[faces[i+1]].z);
+				glVertex3f(coords[faces[i+1]].x, coords[faces[i+1]].y, coords[faces[i+1]].z);
+				glVertex3f(coords[faces[i+2]].x, coords[faces[i+2]].y, coords[faces[i+2]].z);
+				glVertex3f(coords[faces[i+2]].x, coords[faces[i+2]].y, coords[faces[i+2]].z);
+				glVertex3f(coords[faces[i]].x, coords[faces[i]].y, coords[faces[i]].z);
+			}
 		}
 		glEnd();
+		glEnable(GL_LIGHTING);
 	}
 }
 
@@ -172,6 +190,11 @@ Vector3 Static_model::Get_high_corner()
 void Static_model::Show_normals(bool active)
 {
 	show_normals = active;
+}
+
+void Static_model::Show_wireframe(bool active)
+{
+	show_wireframe = active;
 }
 
 void Static_model::Set_model_data(Vectors c, Indexes f)

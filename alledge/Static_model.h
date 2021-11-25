@@ -32,6 +32,7 @@ public:
 	Vector3 Get_low_corner();
 	Vector3 Get_high_corner();
 	void Show_normals(bool active);
+	void Show_wireframe(bool active);
 
 	void Render();
 private:
@@ -46,6 +47,7 @@ private:
 	Vector3 low_corner;
 	Vector3 high_corner;
 	bool show_normals;
+	bool show_wireframe;
 };
 
 #endif
