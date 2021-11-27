@@ -15,160 +15,18 @@
 #include "../../alledge/Bitmap.h"
 
 #include "marching_cubes.h"
-#include "perlin.h"
+#include "cubesphere.h"
 
 Scenenode root;
 shared_ptr<Cameranode> camera;
 shared_ptr<Lightnode> light;
 shared_ptr<Transformnode> transform;
-shared_ptr<Transformnode> transform2;
+shared_ptr<Transformnode> worldtransform;
 shared_ptr<Static_model> model;
 shared_ptr<Static_model_node> model_node;
-
-class PerlinSphere {
-private:
-	Perlin perlin;
-	int radius;
-public:
-	PerlinSphere(Perlin p, int r) {
-		perlin = p;
-		//perlin.Seed(seed);
-		radius = r;
-	}
-
-	float Sample(Vector3 pos) {
-		Vector3 pp = pos*8.5;
-		float p = perlin.Perlin3(pp.x, pp.y, pp.z);
-		//std::cout<<p<<std::endl;
-		//std::cout<<pos.x<<" "<<pos.y<<" "<<pos.z<<std::endl;
-		if(pos.Length() > radius)
-			return -1;
-
-		return p-0.4;
-	}
-};
-
-Vector3 cubizePoint(Vector3& vin) {
-	Vector3 position;
-    double x,y,z;
-    x = vin.x;
-    y = vin.y;
-    z = vin.z;
-
-    double fx, fy, fz;
-    fx = fabsf(x);
-    fy = fabsf(y);
-    fz = fabsf(z);
-
-    const double inverseSqrt2 = 0.70710676908493042;
-
-    if (fy >= fx && fy >= fz) {
-        double a2 = x * x * 2.0;
-        double b2 = z * z * 2.0;
-        double inner = -a2 + b2 -3;
-        double innersqrt = -sqrtf((inner * inner) - 12.0 * a2);
-
-        if(x == 0.0 || x == -0.0) { 
-            position.x = 0.0; 
-        }
-        else {
-            position.x = sqrtf(innersqrt + a2 - b2 + 3.0) * inverseSqrt2;
-        }
-
-        if(z == 0.0 || z == -0.0) {
-            position.z = 0.0;
-        }
-        else {
-            position.z = sqrtf(innersqrt - a2 + b2 + 3.0) * inverseSqrt2;
-        }
-
-        if(position.x > 1.0) position.x = 1.0;
-        if(position.z > 1.0) position.z = 1.0;
-
-        if(x < 0) position.x = -position.x;
-        if(z < 0) position.z = -position.z;
-
-        if (y > 0) {
-            // top face
-            position.y = 1.0;
-        }
-        else {
-            // bottom face
-            position.y = -1.0;
-        }
-    }
-    else if (fx >= fy && fx >= fz) {
-        double a2 = y * y * 2.0;
-        double b2 = z * z * 2.0;
-        double inner = -a2 + b2 -3;
-        double innersqrt = -sqrtf((inner * inner) - 12.0 * a2);
-
-        if(y == 0.0 || y == -0.0) { 
-            position.y = 0.0; 
-        }
-        else {
-            position.y = sqrtf(innersqrt + a2 - b2 + 3.0) * inverseSqrt2;
-        }
-
-        if(z == 0.0 || z == -0.0) {
-            position.z = 0.0;
-        }
-        else {
-            position.z = sqrtf(innersqrt - a2 + b2 + 3.0) * inverseSqrt2;
-        }
-
-        if(position.y > 1.0) position.y = 1.0;
-        if(position.z > 1.0) position.z = 1.0;
-
-        if(y < 0) position.y = -position.y;
-        if(z < 0) position.z = -position.z;
-
-        if (x > 0) {
-            // right face
-            position.x = 1.0;
-        }
-        else {
-            // left face
-            position.x = -1.0;
-        }
-    }
-    else {
-        double a2 = x * x * 2.0;
-        double b2 = y * y * 2.0;
-        double inner = -a2 + b2 -3;
-        double innersqrt = -sqrtf((inner * inner) - 12.0 * a2);
-
-        if(x == 0.0 || x == -0.0) { 
-            position.x = 0.0; 
-        }
-        else {
-            position.x = sqrtf(innersqrt + a2 - b2 + 3.0) * inverseSqrt2;
-        }
-
-        if(y == 0.0 || y == -0.0) {
-            position.y = 0.0;
-        }
-        else {
-            position.y = sqrtf(innersqrt - a2 + b2 + 3.0) * inverseSqrt2;
-        }
-
-        if(position.x > 1.0) position.x = 1.0;
-        if(position.y > 1.0) position.y = 1.0;
-
-        if(x < 0) position.x = -position.x;
-        if(y < 0) position.y = -position.y;
-
-        if (z > 0) {
-            // front face
-            position.z = 1.0;
-        }
-        else {
-            // back face
-            position.z = -1.0;
-        }
-    }
-    return position;
-}
+shared_ptr<Static_model> player_model;
+shared_ptr<Static_model_node> player_model_node;
+shared_ptr<Transformnode> player_transform;
 
 bool Init()
 {
@@ -181,27 +39,14 @@ bool Init()
 	light->Set_position(Vector3(1, 1, 1), true);
 	camera->Attach_node(light);
 
+	worldtransform = new Transformnode;
+	light->Attach_node(worldtransform);
+
 	transform = new Transformnode;
-	light->Attach_node(transform);
+	worldtransform->Attach_node(transform);
 
-	//SphereSampler spheresampler(8);
-	Perlin p;
-	p.Seed(0);
-	PerlinSphere spheresampler(p, 16);
-	Marching_cubes mc;
-	mc.Set_sampler(std::bind(&PerlinSphere::Sample, &spheresampler, std::placeholders::_1));
-
-
-	double start = al_get_time();
-	/*
-	for(int x = -20; x<20; ++x) {
-		for(int y = -20; y<20; ++y) {
-			for(int z = -20; z<20; ++z) {
-				mc.MarchCube(Vector3(x, y, z));
-			}
-		}
-	}
-	*/
+	player_transform = new Transformnode;
+	worldtransform->Attach_node(player_transform);
 
 	int n = 10;
 	float ns  = 2.0f/n;
@@ -269,43 +114,41 @@ bool Init()
 		float z = vertices[i].z * sqrt(1 - (x2 + y2) / 2 + (x2 * y2) / 3);
 		vertices[i] = Vector3(x, y, z);
 	}
-
+/*
 	for(int i = 0; i<vertices.size(); ++i) {
 		vertices[i] = cubizePoint(vertices[i]);
 	}
-/*
-	vertices.push_back(Vector3(-1, 1, 1));
-	vertices.push_back(Vector3( 1, 1, 1));
-	vertices.push_back(Vector3(-1, 1,-1));
-	vertices.push_back(Vector3( 1, 1,-1));
-	vertices.push_back(Vector3(-1,-1, 1));
-	vertices.push_back(Vector3( 1,-1, 1));
-	vertices.push_back(Vector3(-1,-1,-1));
-	vertices.push_back(Vector3( 1,-1,-1));
-
-	indices.insert(indices.end(), {0, 2, 1, 1, 2, 3});
-	indices.insert(indices.end(), {1, 3, 5, 5, 3, 7});
-	indices.insert(indices.end(), {2, 6, 3, 3, 6, 7});
-	indices.insert(indices.end(), {0, 1, 4, 4, 1, 5});
-	indices.insert(indices.end(), {0, 4, 2, 2, 4, 6});
-	indices.insert(indices.end(), {4, 5, 7, 7, 6, 4});
 */
-	double end = al_get_time();
-	double d = end-start;
-	std::cout<<d<<std::endl;
-	//std::cout<<mc.vertices.size()<<" "<<mc.indices.size()<<std::endl;
 
 	model = new Static_model;
-	//model->Set_model_data(mc.vertices, mc.indices);
 	model->Set_model_data(vertices, indices);
 	model->Show_wireframe(true);
 
-	float color[4] = {1, 0, 1, 1};
-//	model->Set_color(color);
 	model_node = new Static_model_node;
 	model_node->Set_model(model);
 	transform->Attach_node(model_node);
-	transform->Set_position(Vector3(0, 0, -2));
+	transform->Set_position(Vector3(0, 0, 0));
+
+	Vectors pv;
+	Indexes pi;
+
+	pv.push_back(Vector3(-0.5, 0, 0));
+	pv.push_back(Vector3(0.5, 0, 0));
+	pv.push_back(Vector3(0, 1, 0));
+	pv.push_back(Vector3(0, 0, 0.5));
+
+	pi.insert(pi.end(), {0, 2, 3, 1, 3, 2});
+
+	player_model = new Static_model;
+	player_model->Set_model_data(pv, pi);
+	float color[4] = {1, 0, 1, 1};
+	player_model->Set_color(color);
+
+	player_model_node = new Static_model_node;
+	player_model_node->Set_model(player_model);
+	player_transform->Attach_node(player_model_node);
+	player_transform->Set_position(Vector3(0, 0, 1));
+	player_transform->Set_scale(Vector3(0.1,0.1,0.1));
 
 	return true;
 }
@@ -342,7 +185,7 @@ void Event(ALLEGRO_EVENT event)
 {
 	if(ALLEGRO_EVENT_MOUSE_AXES == event.type)
 	{
-		transform->Set_rotation(Vector3(event.mouse.y, event.mouse.x, 0));
+		worldtransform->Set_rotation(Vector3(event.mouse.y, event.mouse.x, 0));
 	}
 }
 
