@@ -17,16 +17,15 @@
 #include "marching_cubes.h"
 #include "cubesphere.h"
 #include "world.h"
+#include "player.h"
 
 Scenenode root;
 shared_ptr<Cameranode> camera;
 shared_ptr<Lightnode> light;
 shared_ptr<Transformnode> transform;
 shared_ptr<Transformnode> worldtransform;
-shared_ptr<Static_model> player_model;
-shared_ptr<Static_model_node> player_model_node;
-shared_ptr<Transformnode> player_transform;
 World* world;
+Player* player;
 
 bool Init()
 {
@@ -45,32 +44,10 @@ bool Init()
 	transform = new Transformnode;
 	worldtransform->Attach_node(transform);
 
-	player_transform = new Transformnode;
-	worldtransform->Attach_node(player_transform);
-
 	world = new World(transform);
 	transform->Set_position(Vector3(0, 0, 0));
 
-	Vectors pv;
-	Indexes pi;
-
-	pv.push_back(Vector3(-0.5, 0, 0));
-	pv.push_back(Vector3(0.5, 0, 0));
-	pv.push_back(Vector3(0, 1, 0));
-	pv.push_back(Vector3(0, 0, 0.5));
-
-	pi.insert(pi.end(), {0, 2, 3, 1, 3, 2});
-
-	player_model = new Static_model;
-	player_model->Set_model_data(pv, pi);
-	float color[4] = {1, 0, 1, 1};
-	player_model->Set_color(color);
-
-	player_model_node = new Static_model_node;
-	player_model_node->Set_model(player_model);
-	player_transform->Attach_node(player_model_node);
-	player_transform->Set_position(Vector3(0, 0, 1));
-	player_transform->Set_scale(Vector3(0.1,0.1,0.1));
+	player = new Player(worldtransform);
 
 	return true;
 }
