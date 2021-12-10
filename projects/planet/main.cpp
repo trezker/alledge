@@ -54,6 +54,7 @@ bool Init()
 
 void Update(float dt)
 {
+	player->Update(dt);
 /*	Vector3 rot = transform->Get_rotation();
 	rot.y += 30*dt;
 	transform->Set_rotation(rot);
@@ -86,6 +87,7 @@ void Event(ALLEGRO_EVENT event)
 	{
 		worldtransform->Set_rotation(Vector3(event.mouse.y, event.mouse.x, 0));
 	}
+	player->Event(event);
 }
 
 int main()
