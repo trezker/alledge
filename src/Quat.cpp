@@ -8,6 +8,114 @@
  * Basic quaternion operations.
  */
 
+Quaternion::Quaternion() {
+	q[X] = 0;
+	q[Y] = 0;
+	q[Z] = 0;
+	q[W] = 1;
+}
+
+const Quaternion& Quaternion::operator=(const Quaternion &in) {
+	q[X] = in.q[X];
+	q[Y] = in.q[Y];
+	q[Z] = in.q[Z];
+	q[W] = in.q[W];
+	return in;
+}
+
+void Quaternion::From_axisangle(float x, float y, float z, float a) {
+	q[X] = x * sin( a/2);
+	q[Y] = y * sin( a/2);
+	q[Z] = z * sin( a/2);
+	q[W] = cos( a/2);
+}
+
+void Quaternion::From_axisangle(Vector3 v, float w) {
+	From_axisangle(v.x, v.y, v.z, w);
+}
+
+void Quaternion::ComputeW() {
+  float t = 1.0f - (q[X] * q[X]) - (q[Y] * q[Y]) - (q[Z] * q[Z]);
+
+  if (t < 0.0f)
+    q[W] = 0.0f;
+  else
+    q[W] = -sqrt (t);
+}
+
+void Quaternion::Normalize() {
+	/* compute magnitude of the quaternion */
+	float mag = sqrt ((q[X] * q[X]) + (q[Y] * q[Y]) + (q[Z] * q[Z]) + (q[W] * q[W]));
+
+  /* check for bogus length, to protect against divide by zero */
+	if (mag > 0.0f)
+	{
+		/* normalize it */
+		float oneOverMag = 1.0f / mag;
+
+		q[X] *= oneOverMag;
+		q[Y] *= oneOverMag;
+		q[Z] *= oneOverMag;
+		q[W] *= oneOverMag;
+	}
+}
+
+Quaternion Quaternion::MultQuat(const Quaternion &in) {
+	const quat4_t &qb = in.q;
+	Quaternion out;
+  out.q[W] = (q[W] * qb[W]) - (q[X] * qb[X]) - (q[Y] * qb[Y]) - (q[Z] * qb[Z]);
+  out.q[X] = (q[X] * qb[W]) + (q[W] * qb[X]) + (q[Y] * qb[Z]) - (q[Z] * qb[Y]);
+  out.q[Y] = (q[Y] * qb[W]) + (q[W] * qb[Y]) + (q[Z] * qb[X]) - (q[X] * qb[Z]);
+  out.q[Z] = (q[Z] * qb[W]) + (q[W] * qb[Z]) + (q[X] * qb[Y]) - (q[Y] * qb[X]);
+  return out;
+}
+
+Quaternion Quaternion::MultVec(Vector3 v) {
+	Quaternion out;
+  out.q[W] = - (q[X] * v.x) - (q[Y] * v.y) - (q[Z] * v.z);
+  out.q[X] =   (q[W] * v.x) + (q[Y] * v.z) - (q[Z] * v.y);
+  out.q[Y] =   (q[W] * v.y) + (q[Z] * v.x) - (q[X] * v.z);
+  out.q[Z] =   (q[W] * v.z) + (q[X] * v.y) - (q[Y] * v.x);
+  return out;
+}
+
+Vector3 Quaternion::Quat_rotatePoint(const Vector3 &in) {
+  Quaternion tmp;
+  Quaternion inv;
+  Quaternion final;
+
+  inv.q[X] = -q[X];
+  inv.q[Y] = -q[Y];
+  inv.q[Z] = -q[Z];
+  inv.q[W] =  q[W];
+
+  inv.Normalize();
+
+  tmp = MultVec(in);
+  final = tmp.MultQuat(inv);
+
+  return Vector3(final.q[X], final.q[Y], final.q[Z]);
+}
+
+float Quaternion::DotProduct(const Quaternion &qb) {
+  return ((q[X] * qb.q[X]) + (q[Y] * qb.q[Y]) + (q[Z] * qb.q[Z]) + (q[W] * qb.q[W]));
+}
+
+Quaternion Quaternion::Slerp(const Quaternion &qb, float t) {
+	Quaternion out;
+	Quat_slerp(q, qb.q, t, out.q);
+	return out;
+}
+
+Matrix4 To_matrix4() {
+	return Matrix4();
+}
+
+Vector3 To_euler() {
+	return Vector3();
+}
+
+
 void Quat_init(quat4_t q)
 {
 	q[X] = 0;
