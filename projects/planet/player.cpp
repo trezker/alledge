@@ -19,7 +19,7 @@ Player::Player(shared_ptr<Scenenode> p) {
 	right.x = 1;
 
 	Quat_init(quat_total);
-	//Rotate_local_axis(Vector3(90, 0, 0));
+	Rotate_local_axis(Vector3(0, 0, 0));
 
 	parent = p;
 	transform = new Transformnode;
