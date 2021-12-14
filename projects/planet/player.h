@@ -1,3 +1,5 @@
+#include "../../alledge/Quat.h"
+
 class Player {
 private:
 	shared_ptr<Scenenode> parent;
@@ -7,8 +9,11 @@ private:
 
 	Vector3 position;
 	Vector3 velocity;
-	Vector3 front;
+	Vector3 rotation;
 	Vector3 up;
+	Vector3 front;
+	Vector3 right;
+	quat4_t quat_total;
 	bool key_up;
 	bool key_down;
 	bool key_left;
@@ -17,4 +22,6 @@ public:
 	Player(shared_ptr<Scenenode> p);
 	void Event(ALLEGRO_EVENT &event);
 	void Update(float dt);
+	void Set_rotation(Vector3 v);
+	void Rotate_local_axis(Vector3 v);
 };
