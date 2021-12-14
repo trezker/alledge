@@ -14,10 +14,12 @@ Player::Player(shared_ptr<Scenenode> p) {
 	key_left = false;
 	key_right = false;
 
-	Set_rotation(Vector3(90, 0, 0));
+	front.y = 1;
+	up.z = 1;
+	right.x = 1;
 
-//	front.y = 1;
-//	up.z = 1;
+	Quat_init(quat_total);
+	//Rotate_local_axis(Vector3(90, 0, 0));
 
 	parent = p;
 	transform = new Transformnode;
@@ -75,18 +77,18 @@ void Player::Event(ALLEGRO_EVENT &event) {
 
 void Player::Update(float dt) {
 	if(key_up)
-		velocity = front;
-	else if(key_down)
 		velocity = -front;
+	else if(key_down)
+		velocity = front;
 	else
 		velocity = Vector3();
 
 	if(key_left && !key_right) {
-		Rotate_local_axis(Vector3(0, 0, 1));
+		Rotate_local_axis(Vector3(0, 1, 0));
 		//velocity = -right;
 	}
 	if(!key_left && key_right) {
-		Rotate_local_axis(Vector3(0, 0, -1));
+		Rotate_local_axis(Vector3(0, -1, 0));
 		//velocity = right;
 	}
 
@@ -118,7 +120,7 @@ void Player::Set_rotation(Vector3 v)
 	vec3_t in;
 	in[0] = 0;
 	in[1] = 0;
-	in[2] = -1;
+	in[2] = 1;
 	vec3_t out;
 	Quat_rotatePoint (quat_total, in, out);
 	front.x = out[0];
@@ -140,7 +142,7 @@ void Player::Set_rotation(Vector3 v)
 }
 
 void Player::Rotate_local_axis(Vector3 v) {
-	Vector3 rotrad = v*(M_PI/180);
+	Vector3 rotrad = v*(M_PI/180.0f);
 	quat4_t quat_temp;
 
 	quat4_t quat_local;
@@ -165,7 +167,7 @@ void Player::Rotate_local_axis(Vector3 v) {
 	vec3_t in;
 	in[0] = 0;
 	in[1] = 0;
-	in[2] = -1;
+	in[2] = 1;
 	Quat_rotatePoint (quat_total, in, out);
 	front.x = out[0];
 	front.y = out[1];
