@@ -18,6 +18,9 @@ private:
 	bool key_down;
 	bool key_left;
 	bool key_right;
+
+	void Execute_rotation();
+	void Rotate_on_axis(Vector3 axis, float a);
 public:
 	Player(shared_ptr<Scenenode> p);
 	void Event(ALLEGRO_EVENT &event);

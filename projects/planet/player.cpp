@@ -85,11 +85,9 @@ void Player::Update(float dt) {
 
 	if(key_left && !key_right) {
 		Rotate_local_axis(Vector3(0, 1, 0));
-		//velocity = -right;
 	}
 	if(!key_left && key_right) {
 		Rotate_local_axis(Vector3(0, -1, 0));
-		//velocity = right;
 	}
 
 	position += velocity * dt;
@@ -97,67 +95,7 @@ void Player::Update(float dt) {
 	transform->Set_rotation(rotation);
 }
 
-void Player::Set_rotation(Vector3 v)
-{
-	rotation = v;
-	Vector3 rotrad = rotation*(M_PI/180);
-	quat4_t quat_temp;
-	Quat_init(quat_total);
-
-	quat4_t quat_local;
-	Quat_from_axisangle(quat_local, 1, 0, 0, rotrad.x);
-	Quat_multQuat (quat_local, quat_total, quat_temp);
-	Quat_copy(quat_temp, quat_total);
-
-	Quat_from_axisangle(quat_local, 0, 1, 0, rotrad.y);
-	Quat_multQuat (quat_local, quat_total, quat_temp);
-	Quat_copy(quat_temp, quat_total);
-
-	Quat_from_axisangle(quat_local, 0, 0, 1, rotrad.z);
-	Quat_multQuat (quat_local, quat_total, quat_temp);
-	Quat_copy(quat_temp, quat_total);
-
-	vec3_t in;
-	in[0] = 0;
-	in[1] = 0;
-	in[2] = 1;
-	vec3_t out;
-	Quat_rotatePoint (quat_total, in, out);
-	front.x = out[0];
-	front.y = out[1];
-	front.z = out[2];
-
-	in[0] = 0;
-	in[1] = 1;
-	in[2] = 0;
-	Quat_rotatePoint (quat_total, in, out);
-	up.x = out[0];
-	up.y = out[1];
-	up.z = out[2];
-
-	front.Normalize();
-	up.Normalize();
-	right	= front.CrossProduct(up);
-	right.Normalize();
-}
-
-void Player::Rotate_local_axis(Vector3 v) {
-	Vector3 rotrad = v*(M_PI/180.0f);
-	quat4_t quat_temp;
-
-	quat4_t quat_local;
-	Quat_from_axisangle(quat_local, right.x, right.y, right.z, rotrad.x);
-	Quat_multQuat (quat_local, quat_total, quat_temp);
-	Quat_copy(quat_temp, quat_total);
-
-	Quat_from_axisangle(quat_local, up.x, up.y, up.z, rotrad.y);
-	Quat_multQuat (quat_local, quat_total, quat_temp);
-	Quat_copy(quat_temp, quat_total);
-
-	Quat_from_axisangle(quat_local, front.x, front.y, front.z, rotrad.z);
-	Quat_multQuat (quat_local, quat_total, quat_temp);
-	Quat_copy(quat_temp, quat_total);
-
+void Player::Execute_rotation() {
 	vec3_t out;
 	Quat_to_euler(quat_total, out);
 	rotation.x = out[0] * (180 / M_PI);
@@ -185,4 +123,56 @@ void Player::Rotate_local_axis(Vector3 v) {
 	up.Normalize();
 	right	= front.CrossProduct(up);
 	right.Normalize();
+}
+
+void Player::Set_rotation(Vector3 v)
+{
+	Vector3 rotrad = v * (M_PI/180);
+	quat4_t quat_temp;
+	Quat_init(quat_total);
+
+	quat4_t quat_local;
+	Quat_from_axisangle(quat_local, 1, 0, 0, rotrad.x);
+	Quat_multQuat (quat_local, quat_total, quat_temp);
+	Quat_copy(quat_temp, quat_total);
+
+	Quat_from_axisangle(quat_local, 0, 1, 0, rotrad.y);
+	Quat_multQuat (quat_local, quat_total, quat_temp);
+	Quat_copy(quat_temp, quat_total);
+
+	Quat_from_axisangle(quat_local, 0, 0, 1, rotrad.z);
+	Quat_multQuat (quat_local, quat_total, quat_temp);
+	Quat_copy(quat_temp, quat_total);
+
+	Execute_rotation();
+}
+
+void Player::Rotate_local_axis(Vector3 v) {
+	Vector3 rotrad = v*(M_PI/180.0f);
+	quat4_t quat_temp;
+
+	quat4_t quat_local;
+	Quat_from_axisangle(quat_local, right.x, right.y, right.z, rotrad.x);
+	Quat_multQuat (quat_local, quat_total, quat_temp);
+	Quat_copy(quat_temp, quat_total);
+
+	Quat_from_axisangle(quat_local, up.x, up.y, up.z, rotrad.y);
+	Quat_multQuat (quat_local, quat_total, quat_temp);
+	Quat_copy(quat_temp, quat_total);
+
+	Quat_from_axisangle(quat_local, front.x, front.y, front.z, rotrad.z);
+	Quat_multQuat (quat_local, quat_total, quat_temp);
+	Quat_copy(quat_temp, quat_total);
+
+	Execute_rotation();
+}
+
+void Player::Rotate_on_axis(Vector3 axis, float a) {
+	quat4_t quat_temp;
+	quat4_t quat_local;
+	Quat_from_axisangle(quat_local, axis.x, axis.y, axis.z, a*(M_PI/180.0f));
+	Quat_multQuat (quat_local, quat_total, quat_temp);
+	Quat_copy(quat_temp, quat_total);
+
+	Execute_rotation();
 }
