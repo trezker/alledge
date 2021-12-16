@@ -100,7 +100,8 @@ void Player::Update(float dt) {
 
 	float a = up.GetAngleDegree(position);
 	Vector3 axis = up.CrossProduct(position).GetNormalized();
-	Rotate_on_axis(axis, a);
+	if(a>0)
+		Rotate_on_axis(axis, a);
 
 	transform->Set_position(position);
 
