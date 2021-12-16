@@ -124,6 +124,10 @@ public:
 	static const Vector3 NEGATIVE_UNIT_Y;
 	static const Vector3 NEGATIVE_UNIT_Z;
 
+	float	x;
+	float	y;
+	float	z;
+	/*
 	union
 	{
 		struct
@@ -134,7 +138,7 @@ public:
 		};
 
 		float vector[3];
-	};
+	};*/
 };
 
 class Vector3_comparator {

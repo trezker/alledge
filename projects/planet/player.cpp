@@ -80,11 +80,11 @@ void Player::Event(ALLEGRO_EVENT &event) {
 
 void Player::Update(float dt) {
 	if(key_up)
-		velocity = front;
+		velocity += front*dt;
 	else if(key_down)
-		velocity = -front;
+		velocity -= front*dt;
 	else
-		velocity = Vector3();
+		velocity *= 0.9;
 
 	if(key_left && !key_right) {
 		Rotate_on_axis(up, 1);
@@ -93,13 +93,17 @@ void Player::Update(float dt) {
 		Rotate_on_axis(up, -1);
 	}
 
+	position += velocity * dt;
+	std::cout<<front.x<<" "<<front.y<<" "<<front.z<<" "<<std::endl;
+
+	position.Normalize();
+
 	float a = up.GetAngleDegree(position);
 	Vector3 axis = up.CrossProduct(position).GetNormalized();
 	Rotate_on_axis(axis, a);
-	position.Normalize();
 
-	position += velocity * dt;
 	transform->Set_position(position);
+
 	matrix4_t rm;
 	Quat_to_matrix4(quat_total, rm);
 	Matrix4 m(rm);
@@ -119,20 +123,24 @@ void Player::Execute_rotation() {
 	in[1] = 0;
 	in[2] = 1;
 	Quat_rotatePoint (quat_total, in, out);
-	front.x = out[0];
-	front.y = out[1];
-	front.z = out[2];
+	if(!(std::isnan(out[0]) || std::isnan(out[1]) || std::isnan(out[2]))) {
+		front.x = out[0];
+		front.y = out[1];
+		front.z = out[2];
+		front.Normalize();
+	}
 
 	in[0] = 0;
 	in[1] = 1;
 	in[2] = 0;
 	Quat_rotatePoint (quat_total, in, out);
-	up.x = out[0];
-	up.y = out[1];
-	up.z = out[2];
+	if(!(std::isnan(out[0]) || std::isnan(out[1]) || std::isnan(out[2]))) {
+		up.x = out[0];
+		up.y = out[1];
+		up.z = out[2];
+		up.Normalize();
+	}
 
-	front.Normalize();
-	up.Normalize();
 	right = up.CrossProduct(front);
 	right.Normalize();
 }
