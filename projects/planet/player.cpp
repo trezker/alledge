@@ -19,14 +19,11 @@ Player::Player(shared_ptr<Scenenode> p, World *w) {
 	up.y = 1;
 	front.z = 1;
 	right.x = 1;
-	position.z = 2;
+	position.z = 1;
 
 	Quat_init(quat_total);
+	Rotate_on_axis(up, 180);
 
-	float a = up.GetAngleDegree(position);
-	Vector3 axis = up.CrossProduct(position).GetNormalized();
-	std::cout<<axis.x<<" "<<axis.y<<" "<<axis.z<<" "<<a<<std::endl;
-	Rotate_on_axis(axis, a);
 
 	parent = p;
 	transform = new Transformnode;
@@ -96,9 +93,13 @@ void Player::Update(float dt) {
 		Rotate_on_axis(up, -1);
 	}
 
+	float a = up.GetAngleDegree(position);
+	Vector3 axis = up.CrossProduct(position).GetNormalized();
+	Rotate_on_axis(axis, a);
+	position.Normalize();
+
 	position += velocity * dt;
 	transform->Set_position(position);
-	//transform->Set_rotation(rotation);
 	matrix4_t rm;
 	Quat_to_matrix4(quat_total, rm);
 	Matrix4 m(rm);
