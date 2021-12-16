@@ -1,4 +1,5 @@
 #include "../../alledge/Quat.h"
+class World;
 
 class Player {
 private:
@@ -6,6 +7,8 @@ private:
 	shared_ptr<Static_model> model;
 	shared_ptr<Static_model_node> model_node;
 	shared_ptr<Transformnode> transform;
+
+	World *world;
 
 	Vector3 position;
 	Vector3 velocity;
@@ -22,7 +25,7 @@ private:
 	void Execute_rotation();
 	void Rotate_on_axis(Vector3 axis, float a);
 public:
-	Player(shared_ptr<Scenenode> p);
+	Player(shared_ptr<Scenenode> p, World *w);
 	void Event(ALLEGRO_EVENT &event);
 	void Update(float dt);
 	void Set_rotation(Vector3 v);

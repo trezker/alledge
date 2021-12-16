@@ -3,23 +3,32 @@
 #include "../../alledge/Transformnode.h"
 #include "../../alledge/Static_model_node.h"
 #include "player.h"
+#include "world.h"
 #include <cmath>
 
 typedef std::vector<Vector3> Vectors;
 typedef std::vector<int> Indexes;
 
-Player::Player(shared_ptr<Scenenode> p) {
+Player::Player(shared_ptr<Scenenode> p, World *w) {
+	world = w;
 	key_up = false;
 	key_down = false;
 	key_left = false;
 	key_right = false;
 
-	front.y = 1;
-	up.z = 1;
+	up.y = 1;
+	front.z = 1;
 	right.x = 1;
+	position.z = 2;
 
 	Quat_init(quat_total);
-	Rotate_local_axis(Vector3(0, 0, 0));
+	//Rotate_local_axis(Vector3(0, 0, 0));
+	std::cout<<front.x<<" "<<front.y<<" "<<front.z<<std::endl;
+
+	float a = up.GetAngleDegree(position);
+	Vector3 axis = up.CrossProduct(position).GetNormalized();
+	std::cout<<axis.x<<" "<<axis.y<<" "<<axis.z<<" "<<a<<std::endl;
+	//Rotate_on_axis(Vector3(0,0,1), 90);
 
 	parent = p;
 	transform = new Transformnode;
@@ -30,7 +39,7 @@ Player::Player(shared_ptr<Scenenode> p) {
 
 	pv.push_back(Vector3(-0.5, 0, 0));
 	pv.push_back(Vector3(0.5, 0, 0));
-	pv.push_back(Vector3(0, 0, -1));
+	pv.push_back(Vector3(0, 0, 1));
 	pv.push_back(Vector3(0, 0.5, 0));
 
 	pi.insert(pi.end(), {0, 2, 3, 1, 3, 2});
@@ -44,7 +53,6 @@ Player::Player(shared_ptr<Scenenode> p) {
 	model_node->Set_model(model);
 	transform->Attach_node(model_node);
 
-	position.z = 1;
 	transform->Set_position(position);
 	transform->Set_scale(Vector3(0.1, 0.1, 0.1));
 	transform->Set_rotation(rotation);
@@ -77,17 +85,17 @@ void Player::Event(ALLEGRO_EVENT &event) {
 
 void Player::Update(float dt) {
 	if(key_up)
-		velocity = -front;
-	else if(key_down)
 		velocity = front;
+	else if(key_down)
+		velocity = -front;
 	else
 		velocity = Vector3();
 
 	if(key_left && !key_right) {
-		Rotate_local_axis(Vector3(0, 1, 0));
+		Rotate_on_axis(front, 1);
 	}
 	if(!key_left && key_right) {
-		Rotate_local_axis(Vector3(0, -1, 0));
+		Rotate_on_axis(front, -1);
 	}
 
 	position += velocity * dt;
@@ -98,9 +106,10 @@ void Player::Update(float dt) {
 void Player::Execute_rotation() {
 	vec3_t out;
 	Quat_to_euler(quat_total, out);
-	rotation.x = out[0] * (180 / M_PI);
+	rotation.z = out[0] * (180 / M_PI);
 	rotation.y = out[1] * (180 / M_PI);
-	rotation.z = out[2] * (180 / M_PI);
+	rotation.x = out[2] * (180 / M_PI);
+	std::cout<<floor(rotation.x)<<" "<<floor(rotation.y)<<" "<<floor(rotation.z)<<std::endl;
 
 	vec3_t in;
 	in[0] = 0;
@@ -121,7 +130,7 @@ void Player::Execute_rotation() {
 
 	front.Normalize();
 	up.Normalize();
-	right	= front.CrossProduct(up);
+	right = up.CrossProduct(front);
 	right.Normalize();
 }
 

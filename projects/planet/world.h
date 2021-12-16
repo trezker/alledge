@@ -1,3 +1,8 @@
+#include <cmath>
+
+typedef std::vector<Vector3> Vectors;
+typedef std::vector<int> Indexes;
+
 class World {
 private:
 	shared_ptr<Scenenode> parent;

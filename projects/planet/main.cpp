@@ -47,7 +47,7 @@ bool Init()
 	world = new World(transform);
 	transform->Set_position(Vector3(0, 0, 0));
 
-	player = new Player(worldtransform);
+	player = new Player(worldtransform, world);
 
 	return true;
 }
