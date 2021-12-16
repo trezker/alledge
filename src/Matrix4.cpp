@@ -32,6 +32,11 @@ Matrix4::Matrix4(float m11, float m12, float m13, float m14,
 	m_matrix[15] = m44;
 }
 
+Matrix4::Matrix4(float *m) {
+	for(int i=0;i<16; ++i)
+		m_matrix[i] = m[i];
+}
+
 Matrix4::Matrix4(const Matrix4 &matrix4)
 {
 	m_matrix[0] = matrix4.m_matrix[0];

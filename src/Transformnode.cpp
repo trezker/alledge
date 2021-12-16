@@ -9,6 +9,7 @@
 Transformnode::Transformnode()
 {
 	scale.Set(1, 1, 1);
+	rotate_matrix_set = false;
 }
 
 void Transformnode::Set_position(Vector3 v)
@@ -19,6 +20,14 @@ void Transformnode::Set_position(Vector3 v)
 void Transformnode::Set_rotation(Vector3 v)
 {
 	rotation = v;
+}
+
+void Transformnode::Set_rotation_matrix(const float *m)
+{
+	for(int i = 0; i<16; ++i) {
+		rotation_matrix[i] = m[i];
+	}
+	rotate_matrix_set = true;
 }
 
 void Transformnode::Set_scale(Vector3 v)
@@ -60,9 +69,14 @@ void Transformnode::Prerender()
 {
 	glPushMatrix();
 	glTranslatef(position.x, position.y, position.z);
-	glRotatef(rotation.x, 1, 0, 0);
-	glRotatef(rotation.y, 0, 1, 0);
-	glRotatef(rotation.z, 0, 0, 1);
+	if(rotate_matrix_set) {
+		glMultMatrixf(rotation_matrix);
+	}
+	else {
+		glRotatef(rotation.x, 1, 0, 0);
+		glRotatef(rotation.y, 0, 1, 0);
+		glRotatef(rotation.z, 0, 0, 1);
+	}
 	glScalef(scale.x, scale.y, scale.z);
 }
 

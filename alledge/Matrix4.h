@@ -12,27 +12,12 @@ public:
 	//! \brief Constructor
 	Matrix4();
 
-	//! \brief Constructor
-	//! \param m11 sets element 1-1 to m11
-	//! \param m12 sets element 1-2 to m12
-	//! \param m13 sets element 1-3 to m13
-	//! \param m14 sets element 1-4 to m14
-	//! \param m21 sets element 2-1 to m21
-	//! \param m22 sets element 2-2 to m22
-	//! \param m23 sets element 2-3 to m23
-	//! \param m24 sets element 2-4 to m24
-	//! \param m31 sets element 3-1 to m31
-	//! \param m32 sets element 3-2 to m32
-	//! \param m33 sets element 3-3 to m33
-	//! \param m34 sets element 3-4 to m34
-	//! \param m41 sets element 4-1 to m41
-	//! \param m42 sets element 4-2 to m42
-	//! \param m43 sets element 4-3 to m43
-	//! \param m44 sets element 4-4 to m44
 	Matrix4(float m11, float m12, float m13, float m14,
 			float m21, float m22, float m23, float m24,
 			float m31, float m32, float m33, float m34,
 			float m41, float m42, float m43, float m44);
+
+	Matrix4(float *m);
 
 	//! \brief Constructor
 	//! \param matrix4 Sets this matrix to matrix4

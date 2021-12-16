@@ -22,13 +22,11 @@ Player::Player(shared_ptr<Scenenode> p, World *w) {
 	position.z = 2;
 
 	Quat_init(quat_total);
-	//Rotate_local_axis(Vector3(0, 0, 0));
-	std::cout<<front.x<<" "<<front.y<<" "<<front.z<<std::endl;
 
 	float a = up.GetAngleDegree(position);
 	Vector3 axis = up.CrossProduct(position).GetNormalized();
 	std::cout<<axis.x<<" "<<axis.y<<" "<<axis.z<<" "<<a<<std::endl;
-	//Rotate_on_axis(Vector3(0,0,1), 90);
+	Rotate_on_axis(axis, a);
 
 	parent = p;
 	transform = new Transformnode;
@@ -55,7 +53,7 @@ Player::Player(shared_ptr<Scenenode> p, World *w) {
 
 	transform->Set_position(position);
 	transform->Set_scale(Vector3(0.1, 0.1, 0.1));
-	transform->Set_rotation(rotation);
+	//transform->Set_rotation(rotation);
 }
 
 void Player::Event(ALLEGRO_EVENT &event) {
@@ -92,24 +90,28 @@ void Player::Update(float dt) {
 		velocity = Vector3();
 
 	if(key_left && !key_right) {
-		Rotate_on_axis(front, 1);
+		Rotate_on_axis(up, 1);
 	}
 	if(!key_left && key_right) {
-		Rotate_on_axis(front, -1);
+		Rotate_on_axis(up, -1);
 	}
 
 	position += velocity * dt;
 	transform->Set_position(position);
-	transform->Set_rotation(rotation);
+	//transform->Set_rotation(rotation);
+	matrix4_t rm;
+	Quat_to_matrix4(quat_total, rm);
+	Matrix4 m(rm);
+	m.Transpose();
+	transform->Set_rotation_matrix(m.Get());
 }
 
 void Player::Execute_rotation() {
-	vec3_t out;
+	vec3_t out;/*
 	Quat_to_euler(quat_total, out);
 	rotation.z = out[0] * (180 / M_PI);
 	rotation.y = out[1] * (180 / M_PI);
-	rotation.x = out[2] * (180 / M_PI);
-	std::cout<<floor(rotation.x)<<" "<<floor(rotation.y)<<" "<<floor(rotation.z)<<std::endl;
+	rotation.x = out[2] * (180 / M_PI);*/
 
 	vec3_t in;
 	in[0] = 0;

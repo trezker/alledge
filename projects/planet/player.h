@@ -12,7 +12,7 @@ private:
 
 	Vector3 position;
 	Vector3 velocity;
-	Vector3 rotation;
+	//Vector3 rotation;
 	Vector3 up;
 	Vector3 front;
 	Vector3 right;
