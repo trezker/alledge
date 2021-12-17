@@ -197,3 +197,7 @@ void Player::Rotate_on_axis(Vector3 axis, float a) {
 
 	Execute_rotation();
 }
+
+Vector3 Player::Position() {
+	return position;
+}

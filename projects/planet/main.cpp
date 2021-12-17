@@ -31,7 +31,8 @@ bool Init()
 {
 	camera = new Cameranode();
 	camera->Set_position(Vector3(0, 0, 5));
-	camera->Set_rotation(Vector3(0, 0, 0));
+	//camera->Set_rotation(Vector3(0, 0, 0));
+	camera->Look_at(Vector3(0, 0, 0));
 	root.Attach_node(camera);
 
 	light = new Lightnode;
@@ -55,6 +56,8 @@ bool Init()
 void Update(float dt)
 {
 	player->Update(dt);
+	Vector3 p = player->Position();
+	camera->Set_position(p*5);
 /*	Vector3 rot = transform->Get_rotation();
 	rot.y += 30*dt;
 	transform->Set_rotation(rot);

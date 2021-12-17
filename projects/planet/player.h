@@ -30,4 +30,5 @@ public:
 	void Update(float dt);
 	void Set_rotation(Vector3 v);
 	void Rotate_local_axis(Vector3 v);
+	Vector3 Position();
 };
