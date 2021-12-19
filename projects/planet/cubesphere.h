@@ -1,4 +1,14 @@
-Vector3 cubizePoint(Vector3& vin) {
+Vector3 CubeToSphere(Vector3 c) {
+	float x2 = c.x*c.x;
+	float y2 = c.y*c.y;
+	float z2 = c.z*c.z;
+	float x = c.x * sqrt(1 - (y2 + z2) / 2 + (y2 * z2) / 3);
+	float y = c.y * sqrt(1 - (z2 + x2) / 2 + (z2 * x2) / 3);
+	float z = c.z * sqrt(1 - (x2 + y2) / 2 + (x2 * y2) / 3);
+	return Vector3(x, y, z);
+}
+
+Vector3 CubizePoint(Vector3& vin) {
 	Vector3 position;
 	double x,y,z;
 	x = vin.x;

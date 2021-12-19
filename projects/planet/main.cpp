@@ -14,8 +14,6 @@
 #include "../../alledge/Static_model_node.h"
 #include "../../alledge/Bitmap.h"
 
-#include "marching_cubes.h"
-#include "cubesphere.h"
 #include "world.h"
 #include "player.h"
 
@@ -58,10 +56,8 @@ void Update(float dt)
 	player->Update(dt);
 	Vector3 p = player->Position();
 	camera->Set_position(p*5);
-/*	Vector3 rot = transform->Get_rotation();
-	rot.y += 30*dt;
-	transform->Set_rotation(rot);
-*/}
+	world->Set_detail_center(p);
+}
 
 void Render()
 {
@@ -88,7 +84,7 @@ void Event(ALLEGRO_EVENT event)
 {
 	if(ALLEGRO_EVENT_MOUSE_AXES == event.type)
 	{
-		worldtransform->Set_rotation(Vector3(event.mouse.y, event.mouse.x, 0));
+		//worldtransform->Set_rotation(Vector3(event.mouse.y, event.mouse.x, 0));
 	}
 	player->Event(event);
 }
