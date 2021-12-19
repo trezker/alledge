@@ -3,7 +3,7 @@
 #include "../alledge/Bitmap.h"
 
 Static_model::Static_model()
-:show_normals(false)
+:show_normals(false), show_wireframe(false), show_faces(true)
 {
 	for(int i=0; i<4; ++i)
 	{
@@ -134,15 +134,17 @@ void Static_model::Render()
 	glAlphaFunc(GL_GREATER,0.1f);
 	glEnable(GL_ALPHA_TEST);
 
-	glBegin(GL_TRIANGLES);
-	UV_coords::iterator uv=uv_coords.begin();
-	for(Indexes::iterator i=faces.begin(); i!=faces.end(); ++i, ++uv)
-	{
-		glNormal3f(normals[*i].x, normals[*i].y, normals[*i].z);
-		glTexCoord2f(uv->u, uv->v);
-		glVertex3f(coords[*i].x, coords[*i].y, coords[*i].z);
+	if(show_faces) {
+		glBegin(GL_TRIANGLES);
+		UV_coords::iterator uv=uv_coords.begin();
+		for(Indexes::iterator i=faces.begin(); i!=faces.end(); ++i, ++uv)
+		{
+			glNormal3f(normals[*i].x, normals[*i].y, normals[*i].z);
+			glTexCoord2f(uv->u, uv->v);
+			glVertex3f(coords[*i].x, coords[*i].y, coords[*i].z);
+		}
+		glEnd();
 	}
-	glEnd();
 
 	if(show_normals || show_wireframe)
 	{
@@ -195,6 +197,10 @@ void Static_model::Show_normals(bool active)
 void Static_model::Show_wireframe(bool active)
 {
 	show_wireframe = active;
+}
+
+void Static_model::Show_faces(bool active) {
+	show_faces = active;
 }
 
 void Static_model::Set_model_data(Vectors c, Indexes f)

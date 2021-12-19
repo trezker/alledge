@@ -33,6 +33,7 @@ public:
 	Vector3 Get_high_corner();
 	void Show_normals(bool active);
 	void Show_wireframe(bool active);
+	void Show_faces(bool active);
 
 	void Render();
 private:
@@ -48,6 +49,7 @@ private:
 	Vector3 high_corner;
 	bool show_normals;
 	bool show_wireframe;
+	bool show_faces;
 };
 
 #endif

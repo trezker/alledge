@@ -67,6 +67,7 @@ World::World(shared_ptr<Scenenode> p) {
 	model = new Static_model;
 	model->Set_model_data(vertices, indices);
 	model->Show_wireframe(true);
+	model->Show_faces(false);
 
 	model_node = new Static_model_node;
 	model_node->Set_model(model);
