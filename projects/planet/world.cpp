@@ -75,5 +75,65 @@ World::World(shared_ptr<Scenenode> p) {
 }
 
 void World::Set_detail_center(Vector3 dc) {
-	detail_center = dc;
+	int n = 10;
+	float ns  = 2.0f/n;
+
+	detail_center = dc.GetNormalized();
+	Vector3 oc = SphereToCube(detail_center, 2.0) + Vector3(1, 1, 1);
+	oc *= n/2;
+	oc.x = floor(oc.x);
+	oc.y = floor(oc.y);
+	oc.z = floor(oc.z);
+
+	oc /= (n/2);
+	oc -= Vector3(1, 1, 1);
+
+	Vectors vertices;
+	Indexes indices;
+	if(abs(oc.x)>1) {
+		oc.x /= 2;
+		vertices.push_back(Vector3(oc.x, oc.y, oc.z));
+		vertices.push_back(Vector3(oc.x, oc.y+ns, oc.z));
+		vertices.push_back(Vector3(oc.x, oc.y, oc.z+ns));
+		vertices.push_back(Vector3(oc.x, oc.y+ns, oc.z+ns));
+		if(oc.x > 0) 
+			indices.insert(indices.end(), {0, 1, 2, 1, 3, 2});
+		else
+			indices.insert(indices.end(), {0, 2, 1, 1, 2, 3});
+	}
+	else if(abs(oc.y)>1) {
+		oc.y /= 2;
+		vertices.push_back(Vector3(oc.x, oc.y, oc.z));
+		vertices.push_back(Vector3(oc.x+ns, oc.y, oc.z));
+		vertices.push_back(Vector3(oc.x, oc.y, oc.z+ns));
+		vertices.push_back(Vector3(oc.x+ns, oc.y, oc.z+ns));
+		if(oc.y > 0) 
+			indices.insert(indices.end(), {0, 2, 1, 1, 2, 3});
+		else
+			indices.insert(indices.end(), {0, 1, 2, 1, 3, 2});
+	}
+	else {
+		oc.z /= 2;
+		vertices.push_back(Vector3(oc.x, oc.y, oc.z));
+		vertices.push_back(Vector3(oc.x+ns, oc.y, oc.z));
+		vertices.push_back(Vector3(oc.x, oc.y+ns, oc.z));
+		vertices.push_back(Vector3(oc.x+ns, oc.y+ns, oc.z));
+		if(oc.z > 0) 
+			indices.insert(indices.end(), {0, 1, 2, 1, 3, 2});
+		else
+			indices.insert(indices.end(), {0, 2, 1, 1, 2, 3});
+	}
+
+	for(int i = 0; i<vertices.size(); ++i) {
+		vertices[i] = CubeToSphere(vertices[i]);
+	}
+
+	//Make mesh
+	shared_ptr<Static_model> chunk_model = new Static_model;
+	chunk_model->Set_model_data(vertices, indices);
+	chunk_model->Show_normals(true);
+
+	shared_ptr<Static_model_node> chunk_model_node = new Static_model_node;
+	chunk_model_node->Set_model(chunk_model);
+	parent->Attach_node(chunk_model_node);
 }

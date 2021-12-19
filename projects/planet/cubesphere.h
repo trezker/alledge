@@ -8,7 +8,7 @@ Vector3 CubeToSphere(Vector3 c) {
 	return Vector3(x, y, z);
 }
 
-Vector3 CubizePoint(Vector3& vin) {
+Vector3 SphereToCube(Vector3& vin, float facevalue = 1.0) {
 	Vector3 position;
 	double x,y,z;
 	x = vin.x;
@@ -50,11 +50,11 @@ Vector3 CubizePoint(Vector3& vin) {
 
 		if (y > 0) {
 			// top face
-			position.y = 1.0;
+			position.y = facevalue;
 		}
 		else {
 			// bottom face
-			position.y = -1.0;
+			position.y = -facevalue;
 		}
 	}
 	else if (fx >= fy && fx >= fz) {
@@ -85,11 +85,11 @@ Vector3 CubizePoint(Vector3& vin) {
 
 		if (x > 0) {
 			// right face
-			position.x = 1.0;
+			position.x = facevalue;
 		}
 		else {
 			// left face
-			position.x = -1.0;
+			position.x = -facevalue;
 		}
 	}
 	else {
@@ -120,11 +120,11 @@ Vector3 CubizePoint(Vector3& vin) {
 
 		if (z > 0) {
 			// front face
-			position.z = 1.0;
+			position.z = facevalue;
 		}
 		else {
 			// back face
-			position.z = -1.0;
+			position.z = -facevalue;
 		}
 	}
 	return position;
