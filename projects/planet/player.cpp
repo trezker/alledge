@@ -94,7 +94,7 @@ void Player::Update(float dt) {
 	}
 
 	position += velocity * dt;
-	std::cout<<front.x<<" "<<front.y<<" "<<front.z<<" "<<std::endl;
+	//std::cout<<front.x<<" "<<front.y<<" "<<front.z<<" "<<std::endl;
 
 	position.Normalize();
 

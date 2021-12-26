@@ -141,13 +141,35 @@ public:
 	};*/
 };
 
-class Vector3_comparator {
-    public:
-        bool operator()(const Vector3& lhs, const Vector3& rhs) const {
-            return lhs.x < rhs.x
-                || ( lhs.x == rhs.x && ( lhs.y < rhs.y
-                || ( lhs.y == rhs.y && lhs.z < rhs.z)));
-        }
+struct Vector3_comparator {
+	bool operator()(const Vector3& lhs, const Vector3& rhs) const {
+		return lhs.x < rhs.x
+			|| ( lhs.x == rhs.x && ( lhs.y < rhs.y
+			|| ( lhs.y == rhs.y && lhs.z < rhs.z)));
+	}
+};
+
+struct Vector3i {
+	int x, y, z;
+	Vector3i(const Vector3& v) {
+		x = v.x;
+		y = v.y;
+		z = v.z;
+	}
+};
+
+struct Vector3i_comparator {
+	bool operator()(const Vector3i& lhs, const Vector3i& rhs) const {
+		return lhs.x < rhs.x
+			|| ( lhs.x == rhs.x && ( lhs.y < rhs.y
+			|| ( lhs.y == rhs.y && lhs.z < rhs.z)));
+	}
+};
+
+struct Vector3i_hash {
+	int operator()(const Vector3i& v) const {
+		return (v.x*73856093 ^ v.y*19349663 ^ v.z*83492791) % 1000000;
+	}
 };
 
 #endif

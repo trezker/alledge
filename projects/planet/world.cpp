@@ -1,5 +1,90 @@
+#include <cmath>
 #include "world.h"
 #include "cubesphere.h"
+
+class Chunk {
+private:
+	Vector3 corners[4];
+	Vector3 center;
+	shared_ptr<Scenenode> parent;
+	shared_ptr<Static_model> model;
+	shared_ptr<Static_model_node> model_node;
+public:
+	Chunk(Vector3 oc, shared_ptr<Scenenode> p) {
+		int n = 10;
+		float ns  = 2.0f/n;
+		parent = p;
+
+		Vectors vertices;
+		Indexes indices;
+
+		//Interpolate
+/*		Vector3 ustep;
+		Vector3 vstep;
+
+		for(int u = 0; u < 10; u += 1) {
+			for(int v = 0; v < 10; v += 1) {
+				Vector3 c = corners[0] + (ustep * u) + (vstep*v);
+				c = CubeToSphere(c);
+				//Apply perlin value
+				vertices.push_back(c);
+			}
+		}
+*/
+		//Build faces
+		if(abs(oc.x)>1) {
+			oc.x /= 2;
+			vertices.push_back(Vector3(oc.x, oc.y, oc.z));
+			vertices.push_back(Vector3(oc.x, oc.y+ns, oc.z));
+			vertices.push_back(Vector3(oc.x, oc.y, oc.z+ns));
+			vertices.push_back(Vector3(oc.x, oc.y+ns, oc.z+ns));
+			if(oc.x > 0) 
+				indices.insert(indices.end(), {0, 1, 2, 1, 3, 2});
+			else
+				indices.insert(indices.end(), {0, 2, 1, 1, 2, 3});
+		}
+		else if(abs(oc.y)>1) {
+			oc.y /= 2;
+			vertices.push_back(Vector3(oc.x, oc.y, oc.z));
+			vertices.push_back(Vector3(oc.x+ns, oc.y, oc.z));
+			vertices.push_back(Vector3(oc.x, oc.y, oc.z+ns));
+			vertices.push_back(Vector3(oc.x+ns, oc.y, oc.z+ns));
+			if(oc.y > 0) 
+				indices.insert(indices.end(), {0, 2, 1, 1, 2, 3});
+			else
+				indices.insert(indices.end(), {0, 1, 2, 1, 3, 2});
+		}
+		else {
+			oc.z /= 2;
+			vertices.push_back(Vector3(oc.x, oc.y, oc.z));
+			vertices.push_back(Vector3(oc.x+ns, oc.y, oc.z));
+			vertices.push_back(Vector3(oc.x, oc.y+ns, oc.z));
+			vertices.push_back(Vector3(oc.x+ns, oc.y+ns, oc.z));
+			if(oc.z > 0) 
+				indices.insert(indices.end(), {0, 1, 2, 1, 3, 2});
+			else
+				indices.insert(indices.end(), {0, 2, 1, 1, 2, 3});
+		}
+
+		for(int i = 0; i<4; ++i) {
+			corners[i] = vertices[i];
+			center += corners[i];
+		}
+		center /= 4;
+
+		for(int i = 0; i<vertices.size(); ++i) {
+			vertices[i] = CubeToSphere(vertices[i]);
+		}
+
+		shared_ptr<Static_model> chunk_model = new Static_model;
+		chunk_model->Set_model_data(vertices, indices);
+		chunk_model->Show_normals(true);
+
+		shared_ptr<Static_model_node> chunk_model_node = new Static_model_node;
+		chunk_model_node->Set_model(chunk_model);
+		parent->Attach_node(chunk_model_node);
+	}
+};
 
 World::World(shared_ptr<Scenenode> p) {
 	parent = p;
@@ -80,60 +165,24 @@ void World::Set_detail_center(Vector3 dc) {
 
 	detail_center = dc.GetNormalized();
 	Vector3 oc = SphereToCube(detail_center, 2.0) + Vector3(1, 1, 1);
+	if(std::isnan(oc.x) || std::isnan(oc.y) || std::isnan(oc.z))
+		return;
 	oc *= n/2;
 	oc.x = floor(oc.x);
 	oc.y = floor(oc.y);
 	oc.z = floor(oc.z);
+	
+	Vector3i chunkvector(oc);
+	Chunk* c = chunks[chunkvector];
+	if(c == NULL) {
+		std::cout<<oc.x<<" "<<oc.y<<" "<<oc.y<<std::endl;
+	}
 
 	oc /= (n/2);
 	oc -= Vector3(1, 1, 1);
 
-	Vectors vertices;
-	Indexes indices;
-	if(abs(oc.x)>1) {
-		oc.x /= 2;
-		vertices.push_back(Vector3(oc.x, oc.y, oc.z));
-		vertices.push_back(Vector3(oc.x, oc.y+ns, oc.z));
-		vertices.push_back(Vector3(oc.x, oc.y, oc.z+ns));
-		vertices.push_back(Vector3(oc.x, oc.y+ns, oc.z+ns));
-		if(oc.x > 0) 
-			indices.insert(indices.end(), {0, 1, 2, 1, 3, 2});
-		else
-			indices.insert(indices.end(), {0, 2, 1, 1, 2, 3});
+	if(c == NULL) {
+		c = new Chunk(oc, parent);
+		chunks[chunkvector] = c;
 	}
-	else if(abs(oc.y)>1) {
-		oc.y /= 2;
-		vertices.push_back(Vector3(oc.x, oc.y, oc.z));
-		vertices.push_back(Vector3(oc.x+ns, oc.y, oc.z));
-		vertices.push_back(Vector3(oc.x, oc.y, oc.z+ns));
-		vertices.push_back(Vector3(oc.x+ns, oc.y, oc.z+ns));
-		if(oc.y > 0) 
-			indices.insert(indices.end(), {0, 2, 1, 1, 2, 3});
-		else
-			indices.insert(indices.end(), {0, 1, 2, 1, 3, 2});
-	}
-	else {
-		oc.z /= 2;
-		vertices.push_back(Vector3(oc.x, oc.y, oc.z));
-		vertices.push_back(Vector3(oc.x+ns, oc.y, oc.z));
-		vertices.push_back(Vector3(oc.x, oc.y+ns, oc.z));
-		vertices.push_back(Vector3(oc.x+ns, oc.y+ns, oc.z));
-		if(oc.z > 0) 
-			indices.insert(indices.end(), {0, 1, 2, 1, 3, 2});
-		else
-			indices.insert(indices.end(), {0, 2, 1, 1, 2, 3});
-	}
-
-	for(int i = 0; i<vertices.size(); ++i) {
-		vertices[i] = CubeToSphere(vertices[i]);
-	}
-
-	//Make mesh
-	shared_ptr<Static_model> chunk_model = new Static_model;
-	chunk_model->Set_model_data(vertices, indices);
-	chunk_model->Show_normals(true);
-
-	shared_ptr<Static_model_node> chunk_model_node = new Static_model_node;
-	chunk_model_node->Set_model(chunk_model);
-	parent->Attach_node(chunk_model_node);
 }
