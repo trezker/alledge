@@ -9,6 +9,7 @@ private:
 	shared_ptr<Scenenode> parent;
 	shared_ptr<Static_model> model;
 	shared_ptr<Static_model_node> model_node;
+	bool is_attached;
 public:
 	Chunk(Vector3 oc, shared_ptr<Scenenode> p) {
 		int n = 10;
@@ -76,13 +77,25 @@ public:
 			vertices[i] = CubeToSphere(vertices[i]);
 		}
 
-		shared_ptr<Static_model> chunk_model = new Static_model;
-		chunk_model->Set_model_data(vertices, indices);
-		chunk_model->Show_normals(true);
+		model = new Static_model;
+		model->Set_model_data(vertices, indices);
+		model->Show_normals(true);
 
-		shared_ptr<Static_model_node> chunk_model_node = new Static_model_node;
-		chunk_model_node->Set_model(chunk_model);
-		parent->Attach_node(chunk_model_node);
+		model_node = new Static_model_node;
+		model_node->Set_model(model);
+		parent->Attach_node(model_node);
+		is_attached = true;
+	}
+
+	void Adjust(Vector3 detail_center) {
+		if(is_attached && (detail_center - center).Length() > 0.4) {
+			parent->Detach_node(model_node);
+			is_attached = false;
+		}
+		if(!is_attached && (detail_center - center).Length() <= 0.4) {
+			parent->Attach_node(model_node);
+			is_attached = true;
+		}
 	}
 };
 
@@ -184,5 +197,10 @@ void World::Set_detail_center(Vector3 dc) {
 	if(c == NULL) {
 		c = new Chunk(oc, parent);
 		chunks[chunkvector] = c;
+	}
+
+	for (Chunks::iterator it = chunks.begin(); it != chunks.end(); it++) {
+		if(it->second != NULL)
+			it->second->Adjust(SphereToCube(detail_center));
 	}
 }
