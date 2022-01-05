@@ -1,4 +1,5 @@
 #include <cmath>
+#include <algorithm>
 #include "world.h"
 #include "cubesphere.h"
 
@@ -79,7 +80,7 @@ public:
 
 		model = new Static_model;
 		model->Set_model_data(vertices, indices);
-		model->Show_normals(true);
+		//model->Show_normals(true);
 
 		model_node = new Static_model_node;
 		model_node->Set_model(model);
@@ -177,26 +178,70 @@ void World::Set_detail_center(Vector3 dc) {
 	float ns  = 2.0f/n;
 
 	detail_center = dc.GetNormalized();
-	Vector3 oc = SphereToCube(detail_center, 2.0) + Vector3(1, 1, 1);
+	Vector3 oc = SphereToCube(detail_center, 2.0);
 	if(std::isnan(oc.x) || std::isnan(oc.y) || std::isnan(oc.z))
 		return;
+
+	int axis = 0;
+	if(abs(oc.y)>1) axis = 1;
+	if(abs(oc.z)>1) axis = 2;
+
+
+ 	oc += Vector3(1, 1, 1);
 	oc *= n/2;
 	oc.x = floor(oc.x);
 	oc.y = floor(oc.y);
 	oc.z = floor(oc.z);
-	
-	Vector3i chunkvector(oc);
-	Chunk* c = chunks[chunkvector];
-	if(c == NULL) {
-		std::cout<<oc.x<<" "<<oc.y<<" "<<oc.y<<std::endl;
+
+
+	//Need to generate chunks for adjacent sides
+	Vector3 offsetu;
+	Vector3 offsetv;
+	Vector3 offsetw;
+	int us, ue;
+	int vs, ve;
+	Vector3i iv(oc);
+	if(axis == 0) {
+		offsetu = Vector3(0, 1, 0);
+		offsetv = Vector3(0, 0, 1);
+		offsetw = Vector3(oc.x, 0, 0);
+		us = std::max(iv.y-2, 0);
+		ue = std::min(iv.y+2, n-1);
+		vs = std::max(iv.z-2, 0);
+		ve = std::min(iv.z+2, n-1);
+	}
+	if(axis == 1) {
+		offsetu = Vector3(1, 0, 0);
+		offsetv = Vector3(0, 0, 1);
+		offsetw = Vector3(0, oc.y, 0);
+		us = std::max(iv.x-2, 0);
+		ue = std::min(iv.x+2, n-1);
+		vs = std::max(iv.z-2, 0);
+		ve = std::min(iv.z+2, n-1);
+	}
+	if(axis == 2) {
+		offsetu = Vector3(0, 1, 0);
+		offsetv = Vector3(1, 0, 0);
+		offsetw = Vector3(0, 0, oc.z);
+		us = std::max(iv.y-2, 0);
+		ue = std::min(iv.y+2, n-1);
+		vs = std::max(iv.x-2, 0);
+		ve = std::min(iv.x+2, n-1);
 	}
 
-	oc /= (n/2);
-	oc -= Vector3(1, 1, 1);
-
-	if(c == NULL) {
-		c = new Chunk(oc, parent);
-		chunks[chunkvector] = c;
+	for(int u = us; u <= ue; ++u) {
+		for(int v = vs; v <= ve; ++v) {
+			Vector3 nc = offsetw + offsetu*u + offsetv*v;
+			Vector3i chunkvector(nc);
+			Chunk* c = chunks[chunkvector];
+			if(c == NULL) {
+				std::cout<<chunkvector.x<<" "<<chunkvector.y<<" "<<chunkvector.z<<" "<<std::endl;
+				nc /= (n/2);
+				nc -= Vector3(1, 1, 1);
+				c = new Chunk(nc, parent);
+				chunks[chunkvector] = c;
+			}
+		}
 	}
 
 	for (Chunks::iterator it = chunks.begin(); it != chunks.end(); it++) {
